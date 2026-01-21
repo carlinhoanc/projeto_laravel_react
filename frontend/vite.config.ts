@@ -19,5 +19,8 @@ export default defineConfig({
   // Provide an explicit file extension list to reduce encoding surprises
   resolve: {
     extensions: ['.mjs', '.js', '.ts', '.tsx', '.jsx', '.json']
+  },
+  optimizeDeps: {
+    include: ['react-hook-form', 'react-to-print', 'html2canvas', 'jspdf']
   }
 });
