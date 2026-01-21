@@ -40,7 +40,7 @@ class DatabaseSeeder extends Seeder
                 'social_links' => [
                     'https://github.com/example',
                 ],
-                'summary' => 'Este é um resumo de exemplo para o usuário ' . $user->name,
+                'summary' => 'Este e um resumo de exemplo para o usuario ' . $user->name,
                 'experience' => [],
                 'education' => [],
                 'licenses' => [],
