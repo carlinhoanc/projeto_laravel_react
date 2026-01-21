@@ -11,27 +11,29 @@
     "check-encoding": "node scripts/check-utf8.cjs"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.14.1",
-    "@mui/material": "^5.14.0",
-    "@mui/icons-material": "^5.14.0",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
-    "react-hook-form": "^7.49.0",
-    "react-to-print": "^2.14.13",
+    "@mui/icons-material": "^5.14.0",
+    "@mui/material": "^5.14.0",
+    "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
-    "html2canvas": "^1.4.1"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.49.0",
+    "react-router-dom": "^6.14.1",
+    "react-to-print": "^2.14.13",
+    "sucrase": "^3.35.1"
   },
   "devDependencies": {
-    "typescript": "~5.9.3",
-    "vite": "npm:rolldown-vite@7.2.5",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.4",
     "@vitejs/plugin-react": "^4.0.2",
-    "tailwindcss": "^3.3.2",
+    "autoprefixer": "^10.4.14",
+    "lines-and-columns": "^2.0.4",
     "postcss": "^8.4.32",
-    "autoprefixer": "^10.4.14"
+    "tailwindcss": "^3.3.2",
+    "typescript": "~5.9.3",
+    "vite": "npm:rolldown-vite@7.2.5"
   },
   "overrides": {
     "vite": "npm:rolldown-vite@7.2.5"

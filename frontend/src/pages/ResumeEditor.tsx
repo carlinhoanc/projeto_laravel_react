@@ -6,7 +6,7 @@ import { useReactToPrint } from 'react-to-print';
 import * as resumesApi from '../api/resumes';
 
 export default function ResumeEditor() {
-  const { register, control, handleSubmit, watch, reset } = useForm({
+  const { register, control, handleSubmit, watch, reset, formState: { errors } } = useForm({
     defaultValues: {
       personal_info: { name: '', email: '', phone: '', city: '', country: '' },
       experience: [],
@@ -74,10 +74,23 @@ export default function ResumeEditor() {
         <section>
           <h3 className="text-lg font-semibold mb-2">Dados Pessoais</h3>
           <div className="grid grid-cols-2 gap-4">
-            <input {...register('personal_info.name')} placeholder="Nome" className="border p-2 rounded" />
-            <input {...register('personal_info.email')} placeholder="Email" className="border p-2 rounded" />
-            <input {...register('personal_info.phone')} placeholder="Telefone" className="border p-2 rounded" />
-            <input {...register('personal_info.city')} placeholder="Cidade" className="border p-2 rounded" />
+            <div>
+              <input {...register('personal_info.name', { required: 'Nome é obrigatório' })} placeholder="Nome" className="border p-2 rounded w-full" />
+              {errors.personal_info?.name && <div className="text-sm text-red-600">{errors.personal_info.name.message}</div>}
+            </div>
+
+            <div>
+              <input {...register('personal_info.email', { pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Email inválido' } })} placeholder="Email" className="border p-2 rounded w-full" />
+              {errors.personal_info?.email && <div className="text-sm text-red-600">{errors.personal_info.email.message}</div>}
+            </div>
+
+            <div>
+              <input {...register('personal_info.phone')} placeholder="Telefone" className="border p-2 rounded w-full" />
+            </div>
+
+            <div>
+              <input {...register('personal_info.city')} placeholder="Cidade" className="border p-2 rounded w-full" />
+            </div>
           </div>
         </section>
 

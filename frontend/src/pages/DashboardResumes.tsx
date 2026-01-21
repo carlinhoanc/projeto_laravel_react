@@ -2,6 +2,28 @@ import React, { useEffect, useState } from 'react';
 
 export default function DashboardResumes({ user }: { user: any }) {
   const [resumes, setResumes] = useState<any[]>([]);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [toDelete, setToDelete] = useState<number | null>(null);
+
+  const handleDelete = (id: number) => {
+    setToDelete(id);
+    setConfirmOpen(true);
+  };
+
+  const performDelete = async () => {
+    if (!toDelete) return;
+    try {
+      const api = await import('../api/resumes');
+      await api.deleteResume(toDelete);
+      setResumes((prev: any) => ({ ...prev, data: prev.data.filter((r: any) => r.id !== toDelete) }));
+      setConfirmOpen(false);
+      setToDelete(null);
+      alert('Currículo excluído');
+    } catch (e) {
+      console.error('Delete failed', e);
+      alert('Falha ao excluir');
+    }
+  };
 
   useEffect(() => {
     (async () => {
@@ -35,6 +57,7 @@ export default function DashboardResumes({ user }: { user: any }) {
                 </div>
                 <div className="space-x-2">
                   <a href={`/resumes/${r.id}`} className="px-2 py-1 bg-blue-600 text-white rounded">Abrir</a>
+                  <button onClick={() => handleDelete(r.id)} className="px-2 py-1 bg-red-600 text-white rounded">Excluir</button>
                 </div>
               </div>
             </div>
@@ -67,6 +90,8 @@ export default function DashboardResumes({ user }: { user: any }) {
           ))}
         </div>
       )}
+
+      <ConfirmDialog open={confirmOpen} title="Excluir currículo" message="Deseja excluir este currículo?" onConfirm={performDelete} onClose={() => setConfirmOpen(false)} />
     </div>
   );
 }
