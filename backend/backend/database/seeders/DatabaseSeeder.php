@@ -15,13 +15,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create a Super Admin
-        User::factory()->create([
-            'name' => 'Super Admin',
-            'email' => 'admin@sistema.com',
-            'role' => 'admin',
-            'password' => bcrypt('password'),
-        ]);
+        // Create a Super Admin (idempotent)
+        User::firstOrCreate(
+            ['email' => 'admin@sistema.com'],
+            [
+                'name' => 'Super Admin',
+                'role' => 'admin',
+                'password' => bcrypt('password'),
+            ]
+        );
 
         // Create 5 normal users
         User::factory(5)->create()->each(function ($user) {
@@ -38,12 +40,12 @@ class DatabaseSeeder extends Seeder
                 'social_links' => [
                     'https://github.com/example',
                 ],
-                'summary' => 'Este é um resumo de exemplo para o usuário ' . $user->name,
+                'summary' => 'Este e um resumo de exemplo para o usuario ' . $user->name,
                 'experience' => [],
                 'education' => [],
                 'licenses' => [],
                 'skills' => ['PHP', 'Laravel', 'JavaScript'],
-                'interests' => ['Open Source', 'Música'],
+                'interests' => ['Open Source', 'Musica'],
             ]);
         });
     }

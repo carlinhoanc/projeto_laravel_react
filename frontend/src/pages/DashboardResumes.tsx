@@ -2,12 +2,38 @@ import React, { useEffect, useState } from 'react';
 
 export default function DashboardResumes({ user }: { user: any }) {
   const [resumes, setResumes] = useState<any[]>([]);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [toDelete, setToDelete] = useState<number | null>(null);
+
+  const handleDelete = (id: number) => {
+    setToDelete(id);
+    setConfirmOpen(true);
+  };
+
+  const performDelete = async () => {
+    if (!toDelete) return;
+    try {
+      const api = await import('../api/resumes');
+      await api.deleteResume(toDelete);
+      setResumes((prev: any) => ({ ...prev, data: prev.data.filter((r: any) => r.id !== toDelete) }));
+      setConfirmOpen(false);
+      setToDelete(null);
+      alert('Currículo excluído');
+    } catch (e) {
+      console.error('Delete failed', e);
+      alert('Falha ao excluir');
+    }
+  };
 
   useEffect(() => {
     (async () => {
-      // fetch resumes
-      const res = await fetch('/api/resumes', { credentials: 'include' });
-      if (res.ok) setResumes(await res.json());
+      try {
+        const r = await import('../api/resumes');
+        const data = await r.listResumes();
+        setResumes(data);
+      } catch (e) {
+        console.error('Failed to load resumes', e);
+      }
     })();
   }, []);
 
@@ -15,11 +41,13 @@ export default function DashboardResumes({ user }: { user: any }) {
     <div className="p-4">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">Currículos</h1>
-        {!user?.isAdmin && <a href="/resumes/new" className="px-3 py-2 bg-green-600 text-white rounded">Criar Novo</a>}
+        {!(user?.role === 'admin' || user?.access_level === 'admin') && (
+          <a href="/resumes/new" className="px-3 py-2 bg-green-600 text-white rounded">Criar Novo</a>
+        )}
       </div>
 
       <div className="grid gap-4">
-        {resumes.data ? (
+        {resumes && resumes.data ? (
           resumes.data.map((r: any) => (
             <div key={r.id} className="p-4 border rounded bg-white shadow">
               <div className="flex items-center justify-between">
@@ -29,6 +57,7 @@ export default function DashboardResumes({ user }: { user: any }) {
                 </div>
                 <div className="space-x-2">
                   <a href={`/resumes/${r.id}`} className="px-2 py-1 bg-blue-600 text-white rounded">Abrir</a>
+                  <button onClick={() => handleDelete(r.id)} className="px-2 py-1 bg-red-600 text-white rounded">Excluir</button>
                 </div>
               </div>
             </div>
@@ -37,6 +66,32 @@ export default function DashboardResumes({ user }: { user: any }) {
           <div>Carregando...</div>
         )}
       </div>
+
+      {resumes && resumes.meta && (
+        <div className="mt-4 flex items-center justify-center gap-2">
+          {resumes.meta.links?.map((l: any, idx: number) => (
+            <button
+              key={idx}
+              disabled={!l.url}
+              onClick={() => l.url && (async () => {
+                try {
+                  const url = new URL(l.url);
+                  const page = url.searchParams.get('page') || '1';
+                  const data = await (await import('../api/resumes')).listResumes(page);
+                  setResumes(data);
+                } catch (e) {
+                  console.error(e);
+                }
+              })()}
+              className={`px-3 py-1 rounded ${l.active ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}
+            >
+              {l.label.replace(/<[^>]+>/g, '')}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <ConfirmDialog open={confirmOpen} title="Excluir currículo" message="Deseja excluir este currículo?" onConfirm={performDelete} onClose={() => setConfirmOpen(false)} />
     </div>
   );
 }

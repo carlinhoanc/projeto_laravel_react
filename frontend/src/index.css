@@ -10,3 +10,22 @@ html, body, #app {
 .resume-preview {
   @apply bg-white shadow rounded p-6;
 }
+
+/* Print styles to ensure two-column layout prints nicely */
+@media print {
+  body {
+    -webkit-print-color-adjust: exact;
+  }
+  .resume-preview {
+    box-shadow: none;
+    padding: 0;
+  }
+  .resume-preview > aside {
+    width: 30%;
+    float: left;
+  }
+  .resume-preview > main {
+    width: 70%;
+    float: right;
+  }
+}
