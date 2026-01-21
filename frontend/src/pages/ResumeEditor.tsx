@@ -76,12 +76,12 @@ export default function ResumeEditor() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <input {...register('personal_info.name', { required: 'Nome é obrigatório' })} placeholder="Nome" className="border p-2 rounded w-full" />
-              {errors.personal_info?.name && <div className="text-sm text-red-600">{errors.personal_info.name.message}</div>}
+              {(errors as any).personal_info?.name && <div className="text-sm text-red-600">{(errors as any).personal_info.name.message}</div>}
             </div>
 
             <div>
               <input {...register('personal_info.email', { pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Email inválido' } })} placeholder="Email" className="border p-2 rounded w-full" />
-              {errors.personal_info?.email && <div className="text-sm text-red-600">{errors.personal_info.email.message}</div>}
+              {(errors as any).personal_info?.email && <div className="text-sm text-red-600">{(errors as any).personal_info.email.message}</div>}
             </div>
 
             <div>

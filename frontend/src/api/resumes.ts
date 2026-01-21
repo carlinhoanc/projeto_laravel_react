@@ -1,4 +1,4 @@
-export async function listResumes(page = 1) {
+export async function listResumes(page: number | string = 1) {
   const res = await fetch(`/api/resumes?page=${page}`, { credentials: 'include' });
   if (!res.ok) throw new Error('Failed to load resumes');
   return res.json();
