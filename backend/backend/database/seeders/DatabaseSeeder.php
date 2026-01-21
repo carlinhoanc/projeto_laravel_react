@@ -43,7 +43,7 @@ class DatabaseSeeder extends Seeder
                 'education' => [],
                 'licenses' => [],
                 'skills' => ['PHP', 'Laravel', 'JavaScript'],
-                'interests' => ['Open Source', 'Música'],
+                'interests' => ['Open Source', 'Musica'],
             ]);
         });
     }
