@@ -6,7 +6,7 @@ import { useReactToPrint } from 'react-to-print';
 import * as resumesApi from '../api/resumes';
 
 export default function ResumeEditor() {
-  const { register, control, handleSubmit, watch, reset, formState: { errors } } = useForm({
+  const { register, control, handleSubmit, watch, reset, formState: { errors } } = useForm<any>({
     defaultValues: {
       personal_info: { name: '', email: '', phone: '', city: '', country: '' },
       experience: [],

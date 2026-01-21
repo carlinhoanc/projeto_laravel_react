@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import ConfirmDialog from '../components/ConfirmDialog';
 
 export default function DashboardResumes({ user }: { user: any }) {
-  const [resumes, setResumes] = useState<any[]>([]);
+  const [resumes, setResumes] = useState<any | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [toDelete, setToDelete] = useState<number | null>(null);
 
