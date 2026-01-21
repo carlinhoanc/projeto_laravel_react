@@ -6,6 +6,9 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import UsersList from './pages/UsersList';
 import Profile from './pages/Profile';
+import ForgotPassword from './pages/ForgotPassword';
+import DashboardResumes from './pages/DashboardResumes';
+import ResumeEditor from './pages/ResumeEditor';
 import { getCurrentUser, removeAuthToken } from './auth';
 
 export default function App() {
@@ -33,7 +36,11 @@ export default function App() {
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login onLogin={(u: any) => setUser(u)} />} />
         <Route path="/register" element={<Register onRegister={(u: any) => setUser(u)} />} />
+        <Route path="/forgot" element={<ForgotPassword />} />
         <Route path="/dashboard" element={user ? <Dashboard user={user} /> : <Navigate to="/login" />} />
+        <Route path="/resumes" element={user ? <DashboardResumes user={user} /> : <Navigate to="/login" />} />
+        <Route path="/resumes/new" element={user ? <ResumeEditor /> : <Navigate to="/login" />} />
+        <Route path="/resumes/:id" element={user ? <ResumeEditor /> : <Navigate to="/login" />} />
         <Route path="/users" element={user ? <UsersList /> : <Navigate to="/login" />} />
         <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
       </Routes>

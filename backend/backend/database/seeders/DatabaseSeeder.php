@@ -15,11 +15,36 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
+        // Create a Super Admin
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Super Admin',
+            'email' => 'admin@sistema.com',
+            'role' => 'admin',
+            'password' => bcrypt('password'),
         ]);
+
+        // Create 5 normal users
+        User::factory(5)->create()->each(function ($user) {
+            // Optionally create a sample resume for each user
+            \App\Models\Resume::create([
+                'user_id' => $user->id,
+                'personal_info' => [
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'phone' => '123456789',
+                    'city' => 'Cidade',
+                    'country' => 'Brasil',
+                ],
+                'social_links' => [
+                    'https://github.com/example',
+                ],
+                'summary' => 'Este é um resumo de exemplo para o usuário ' . $user->name,
+                'experience' => [],
+                'education' => [],
+                'licenses' => [],
+                'skills' => ['PHP', 'Laravel', 'JavaScript'],
+                'interests' => ['Open Source', 'Música'],
+            ]);
+        });
     }
 }

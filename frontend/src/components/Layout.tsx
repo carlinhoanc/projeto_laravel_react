@@ -47,6 +47,7 @@ export default function Layout({ children, user, onLogout }: any) {
 
   const primaryItems = [
     { text: 'Dashboard', icon: norm(DashboardIcon), path: '/dashboard' },
+    { text: 'Currículos', icon: norm(DashboardIcon), path: '/resumes' },
   ];
 
   const adminItems = [{ text: 'Usuarios', icon: norm(PeopleIcon), path: '/users' }];
@@ -133,7 +134,7 @@ export default function Layout({ children, user, onLogout }: any) {
           </Typography>
           {mdUp && (
             <Typography variant="body1" sx={{ mr: 2 }}>
-              {user ? `${user.name} (${user.access_level})` : 'Visitar'}
+              {user ? `${user.name} (${user.role ?? user.access_level ?? 'user'})` : 'Visitar'}
             </Typography>
           )}
         </Toolbar>
