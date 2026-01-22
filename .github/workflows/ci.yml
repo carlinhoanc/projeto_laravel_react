@@ -58,8 +58,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Install and build frontend
+      - name: Install, test and build frontend
         working-directory: frontend
         run: |
           npm ci
+          npm test --if-present -- --run
           npm run build --if-present
