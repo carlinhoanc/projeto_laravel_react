@@ -4,6 +4,8 @@ export async function listResumes(page: number | string = 1) {
     credentials: 'include',
     cache: 'no-store',
     headers: {
+      'Accept': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest',
       'Cache-Control': 'no-cache',
       'Pragma': 'no-cache',
     },
@@ -34,7 +36,7 @@ export async function listResumes(page: number | string = 1) {
 }
 
 export async function getResume(id: number | string) {
-  const res = await fetch(`/api/resumes/${id}`, { credentials: 'include' });
+  const res = await fetch(`/api/resumes/${id}`, { credentials: 'include', headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } });
   if (!res.ok) throw new Error('Failed to load resume');
   return res.json();
 }
@@ -43,7 +45,7 @@ export async function createResume(data: any) {
   const res = await fetch(`/api/resumes`, {
     method: 'POST',
     credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error('Failed to create resume');
@@ -54,7 +56,7 @@ export async function updateResume(id: number | string, data: any) {
   const res = await fetch(`/api/resumes/${id}`, {
     method: 'PUT',
     credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error('Failed to update resume');
@@ -65,6 +67,7 @@ export async function deleteResume(id: number | string) {
   const res = await fetch(`/api/resumes/${id}`, {
     method: 'DELETE',
     credentials: 'include',
+    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
   });
   if (!res.ok) throw new Error('Failed to delete resume');
   return true;
