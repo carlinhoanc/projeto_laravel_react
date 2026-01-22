@@ -19,6 +19,7 @@ export async function listResumes(page: number | string = 1) {
     return retry.json();
   }
 
+  if (res.status === 401) throw new Error('Unauthenticated');
   if (!res.ok) throw new Error(`Failed to load resumes (status ${res.status})`);
 
   // Helpful debug info
@@ -37,6 +38,7 @@ export async function listResumes(page: number | string = 1) {
 
 export async function getResume(id: number | string) {
   const res = await fetch(`/api/resumes/${id}`, { credentials: 'include', headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } });
+  if (res.status === 401) throw new Error('Unauthenticated');
   if (!res.ok) throw new Error('Failed to load resume');
   return res.json();
 }
@@ -48,6 +50,7 @@ export async function createResume(data: any) {
     headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
+  if (res.status === 401) throw new Error('Unauthenticated');
   if (!res.ok) throw new Error('Failed to create resume');
   return res.json();
 }
@@ -59,6 +62,7 @@ export async function updateResume(id: number | string, data: any) {
     headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
+  if (res.status === 401) throw new Error('Unauthenticated');
   if (!res.ok) throw new Error('Failed to update resume');
   return res.json();
 }
@@ -69,6 +73,7 @@ export async function deleteResume(id: number | string) {
     credentials: 'include',
     headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
   });
+  if (res.status === 401) throw new Error('Unauthenticated');
   if (!res.ok) throw new Error('Failed to delete resume');
   return true;
 }
