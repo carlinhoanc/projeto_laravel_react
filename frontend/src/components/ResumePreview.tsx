@@ -20,8 +20,19 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
           <div className="text-sm text-gray-700">{p.phone}</div>
         </div>
 
+        {resume?.social_links && resume.social_links.length > 0 && (
+          <div className="mb-4">
+            <h3 className="font-semibold">Links</h3>
+            <div className="text-sm text-gray-700 mt-1">
+              {resume.social_links.map((l: string, i: number) => (
+                <div key={i}><a href={l} target="_blank" rel="noreferrer" className="text-blue-600 underline">{l}</a></div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="mb-4">
-          <h3 className="font-semibold">Principais Competências</h3>
+          <h3 className="font-semibold">Principais CompetÃªncias</h3>
           <div className="flex flex-wrap gap-2 mt-2">
             {skills.map((s: string, i: number) => (
               <span key={i} className="text-sm bg-blue-100 px-2 py-1 rounded">{s}</span>
@@ -37,7 +48,7 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
         </div>
 
         <div className="mb-4">
-          <h3 className="text-lg font-semibold">Experiência Profissional</h3>
+          <h3 className="text-lg font-semibold">ExperiÃªncia Profissional</h3>
           <div className="space-y-3 mt-2">
             {experience.map((e: any, i: number) => (
               <div key={i}>
@@ -52,7 +63,7 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold">Formação</h3>
+          <h3 className="text-lg font-semibold">FormaÃ§Ã£o</h3>
           <div className="mt-2 space-y-2">
             {education.map((ed: any, i: number) => (
               <div key={i}>

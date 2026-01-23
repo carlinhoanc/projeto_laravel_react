@@ -19,4 +19,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Profile update
     Route::patch('/profile', [AuthController::class, 'updateProfile']);
     Route::put('/profile', [AuthController::class, 'updateProfile']);
+
+    // Resume resource routes
+    Route::apiResource('resumes', \App\Http\Controllers\Api\ResumeController::class);
 });

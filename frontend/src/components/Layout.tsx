@@ -47,7 +47,7 @@ export default function Layout({ children, user, onLogout }: any) {
 
   const primaryItems = [
     { text: 'Dashboard', icon: norm(DashboardIcon), path: '/dashboard' },
-    { text: 'Currículos', icon: norm(DashboardIcon), path: '/resumes' },
+    { text: 'CurrÃ­culos', icon: norm(DashboardIcon), path: '/resumes' },
   ];
 
   const adminItems = [{ text: 'Usuarios', icon: norm(PeopleIcon), path: '/users' }];

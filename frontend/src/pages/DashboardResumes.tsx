@@ -1,10 +1,67 @@
 import React, { useEffect, useState } from 'react';
+import { 
+  Paper, 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableContainer, 
+  TableHead, 
+  TableRow, 
+  Typography, 
+  IconButton, 
+  Box, 
+  Button,
+  Chip 
+} from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import { useNavigate } from 'react-router-dom';
 import ConfirmDialog from '../components/ConfirmDialog';
+import * as resumesApi from '../api/resumes';
+
+const norm = (c: any) => (c && c.default ? c.default : c);
+
+function renderIconSafe(c: any, props: any = {}) {
+  const comp = norm(c);
+  if (typeof comp === 'function' || (typeof comp === 'object' && comp !== null)) {
+    try {
+      return React.createElement(comp, props);
+    } catch (e) {
+      console.error('Failed to create icon element', e, comp);
+      return null;
+    }
+  }
+  return null;
+}
 
 export default function DashboardResumes({ user }: { user: any }) {
-  const [resumes, setResumes] = useState<any | null>(null);
+  const [resumes, setResumes] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [toDelete, setToDelete] = useState<number | null>(null);
+  const navigate = useNavigate();
+
+  const loadResumes = async () => {
+    try {
+      setLoading(true);
+      const data = await resumesApi.listResumes();
+      setResumes(data.data || []);
+    } catch (e: any) {
+      console.error('Failed to load resumes', e);
+      alert('Erro ao carregar curriculos: ' + (e.message || 'Erro desconhecido'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadResumes();
+  }, []);
+
+  const handleEdit = (id: number) => {
+    navigate(`/resumes/${id}`);
+  };
 
   const handleDelete = (id: number) => {
     setToDelete(id);
@@ -14,85 +71,100 @@ export default function DashboardResumes({ user }: { user: any }) {
   const performDelete = async () => {
     if (!toDelete) return;
     try {
-      const api = await import('../api/resumes');
-      await api.deleteResume(toDelete);
-      setResumes((prev: any) => ({ ...prev, data: prev.data.filter((r: any) => r.id !== toDelete) }));
+      await resumesApi.deleteResume(toDelete);
       setConfirmOpen(false);
       setToDelete(null);
-      alert('Currículo excluído');
+      await loadResumes();
     } catch (e) {
       console.error('Delete failed', e);
       alert('Falha ao excluir');
     }
   };
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const r = await import('../api/resumes');
-        const data = await r.listResumes();
-        setResumes(data);
-      } catch (e) {
-        console.error('Failed to load resumes', e);
-      }
-    })();
-  }, []);
-
   return (
-    <div className="p-4">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">Currículos</h1>
-        {!(user?.role === 'admin' || user?.access_level === 'admin') && (
-          <a href="/resumes/new" className="px-3 py-2 bg-green-600 text-white rounded">Criar Novo</a>
-        )}
-      </div>
+    <Paper sx={{ p: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="h5">
+          Lista de Curriculos
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={renderIconSafe(AddIcon)}
+          onClick={() => navigate('/resumes/new')}
+        >
+          Criar Novo
+        </Button>
+      </Box>
 
-      <div className="grid gap-4">
-        {resumes && resumes.data ? (
-          resumes.data.map((r: any) => (
-            <div key={r.id} className="p-4 border rounded bg-white shadow">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-lg font-semibold">{r.personal_info?.name || 'Sem nome'}</div>
-                  <div className="text-sm text-gray-600">{r.personal_info?.city || ''}</div>
-                </div>
-                <div className="space-x-2">
-                  <a href={`/resumes/${r.id}`} className="px-2 py-1 bg-blue-600 text-white rounded">Abrir</a>
-                  <button onClick={() => handleDelete(r.id)} className="px-2 py-1 bg-red-600 text-white rounded">Excluir</button>
-                </div>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div>Carregando...</div>
-        )}
-      </div>
+      <TableContainer>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Nome</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>Cidade</TableCell>
+              <TableCell>Habilidades</TableCell>
+              <TableCell>Usuario</TableCell>
+              <TableCell>Data</TableCell>
+              <TableCell>Acoes</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={7} align="center">
+                  Carregando...
+                </TableCell>
+              </TableRow>
+            ) : resumes.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} align="center">
+                  Nenhum curriculo encontrado
+                </TableCell>
+              </TableRow>
+            ) : (
+              resumes.map((r: any) => (
+                <TableRow key={r.id}>
+                  <TableCell>{r.personal_info?.name || '-'}</TableCell>
+                  <TableCell>{r.personal_info?.email || '-'}</TableCell>
+                  <TableCell>{r.personal_info?.city || '-'}</TableCell>
+                  <TableCell>
+                    <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                      {r.skills?.slice(0, 3).map((skill: string, idx: number) => (
+                        <Chip key={idx} label={skill} size="small" />
+                      ))}
+                      {r.skills?.length > 3 && (
+                        <Chip label={`+${r.skills.length - 3}`} size="small" variant="outlined" />
+                      )}
+                    </Box>
+                  </TableCell>
+                  <TableCell>{r.user?.name || '-'}</TableCell>
+                  <TableCell>{new Date(r.created_at).toLocaleDateString('pt-BR')}</TableCell>
+                  <TableCell>
+                    <Box>
+                      <IconButton onClick={() => handleEdit(r.id)} title="Editar">
+                        {renderIconSafe(EditIcon)}
+                      </IconButton>
+                      <IconButton onClick={() => handleDelete(r.id)} title="Excluir">
+                        {renderIconSafe(DeleteIcon, { color: 'error' })}
+                      </IconButton>
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
-      {resumes && resumes.meta && (
-        <div className="mt-4 flex items-center justify-center gap-2">
-          {resumes.meta.links?.map((l: any, idx: number) => (
-            <button
-              key={idx}
-              disabled={!l.url}
-              onClick={() => l.url && (async () => {
-                try {
-                  const url = new URL(l.url);
-                  const page = url.searchParams.get('page') || '1';
-                  const data = await (await import('../api/resumes')).listResumes(page);
-                  setResumes(data);
-                } catch (e) {
-                  console.error(e);
-                }
-              })()}
-              className={`px-3 py-1 rounded ${l.active ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}
-            >
-              {l.label.replace(/<[^>]+>/g, '')}
-            </button>
-          ))}
-        </div>
-      )}
-
-      <ConfirmDialog open={confirmOpen} title="Excluir currículo" message="Deseja excluir este currículo?" onConfirm={performDelete} onClose={() => setConfirmOpen(false)} />
-    </div>
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Excluir curriculo"
+        message="Deseja realmente excluir este curriculo?"
+        onConfirm={performDelete}
+        onClose={() => setConfirmOpen(false)}
+      />
+    </Paper>
   );
 }
