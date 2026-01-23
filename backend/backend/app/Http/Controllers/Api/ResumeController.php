@@ -18,12 +18,19 @@ class ResumeController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
+        $page = $request->get('page', 1);
+
+        // Set cache headers for API responses (5 minutes)
+        $cacheMinutes = 5;
 
         if ($user->isAdmin()) {
-            return Resume::with('user')->paginate(20);
+            $resumes = Resume::with('user')->paginate(20);
+        } else {
+            $resumes = Resume::where('user_id', $user->id)->with('user')->paginate(20);
         }
 
-        return Resume::where('user_id', $user->id)->with('user')->paginate(20);
+        return response()->json($resumes)
+            ->header('Cache-Control', "private, max-age=" . ($cacheMinutes * 60));
     }
 
     public function store(StoreResumeRequest $request)
@@ -39,7 +46,8 @@ class ResumeController extends Controller
     public function show(Resume $resume)
     {
         $this->authorize('view', $resume);
-        return $resume->load('user');
+        return response()->json($resume->load('user'))
+            ->header('Cache-Control', 'private, max-age=300'); // 5 minutes
     }
 
     public function update(UpdateResumeRequest $request, Resume $resume)

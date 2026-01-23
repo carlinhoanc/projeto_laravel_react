@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { 
   Paper, 
   Table, 
@@ -42,7 +42,7 @@ export default function DashboardResumes({ user }: { user: any }) {
   const [toDelete, setToDelete] = useState<number | null>(null);
   const navigate = useNavigate();
 
-  const loadResumes = async () => {
+  const loadResumes = useCallback(async () => {
     try {
       setLoading(true);
       const data = await resumesApi.listResumes();
@@ -53,22 +53,22 @@ export default function DashboardResumes({ user }: { user: any }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     loadResumes();
   }, []);
 
-  const handleEdit = (id: number) => {
+  const handleEdit = useCallback((id: number) => {
     navigate(`/resumes/${id}`);
-  };
+  }, [navigate]);
 
-  const handleDelete = (id: number) => {
+  const handleDelete = useCallback((id: number) => {
     setToDelete(id);
     setConfirmOpen(true);
-  };
+  }, []);
 
-  const performDelete = async () => {
+  const performDelete = useCallback(async () => {
     if (!toDelete) return;
     try {
       await resumesApi.deleteResume(toDelete);
@@ -79,7 +79,7 @@ export default function DashboardResumes({ user }: { user: any }) {
       console.error('Delete failed', e);
       alert('Falha ao excluir');
     }
-  };
+  }, [toDelete, loadResumes]);
 
   return (
     <Paper sx={{ p: 2 }}>

@@ -1,49 +1,80 @@
 import { getAuthHeaders, getAuthToken } from '../auth';
 
+// Simple in-memory cache with TTL (5 minutes)
+const cache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+function isCacheValid(key: string): boolean {
+  const entry = cache.get(key);
+  if (!entry) return false;
+  return Date.now() - entry.timestamp < CACHE_TTL;
+}
+
+function getFromCache(key: string): any | null {
+  if (isCacheValid(key)) {
+    console.debug('Cache hit:', key);
+    return cache.get(key)?.data || null;
+  }
+  return null;
+}
+
+function setCache(key: string, data: any): void {
+  cache.set(key, { data, timestamp: Date.now() });
+}
+
+function clearCache(pattern?: string): void {
+  if (!pattern) {
+    cache.clear();
+    return;
+  }
+  for (const key of cache.keys()) {
+    if (key.includes(pattern)) {
+      cache.delete(key);
+    }
+  }
+}
+
 export async function listResumes(page: number | string = 1) {
-  // Force no-cache to avoid 304 Not Modified from intermediary caches or dev server
-  console.debug('listResumes: hasToken=', !!getAuthToken());
+  const cacheKey = `list-resumes-${page}`;
+  
+  // Try cache first
+  const cached = getFromCache(cacheKey);
+  if (cached) return cached;
+
+  console.debug('listResumes: fetching page', page);
   const res = await fetch(`/api/resumes?page=${page}`, {
     cache: 'no-store',
     headers: {
       ...getAuthHeaders(),
       'Accept': 'application/json',
       'X-Requested-With': 'XMLHttpRequest',
-      'Cache-Control': 'no-cache',
-      'Pragma': 'no-cache',
     },
   });
-
-  // If a 304 is returned, retry once with explicit no-store
-  if (res.status === 304) {
-    console.warn('listResumes: received 304 Not Modified, retrying with no-store');
-    const retry = await fetch(`/api/resumes?page=${page}`, { cache: 'no-store', headers: { ...getAuthHeaders(), 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } });
-    if (!retry.ok) throw new Error(`Failed to load resumes (status ${retry.status})`);
-    return retry.json();
-  }
 
   if (res.status === 401) throw new Error('Unauthenticated');
   if (!res.ok) throw new Error(`Failed to load resumes (status ${res.status})`);
 
-  // Helpful debug info
-  try {
-    console.debug('listResumes: response headers', {
-      etag: res.headers.get('etag'),
-      lastModified: res.headers.get('last-modified'),
-      status: res.status,
-    });
-  } catch (e) {
-    // ignore
-  }
-
-  return res.json();
+  const data = await res.json();
+  setCache(cacheKey, data);
+  return data;
 }
 
 export async function getResume(id: number | string) {
-  const res = await fetch(`/api/resumes/${id}`, { headers: { ...getAuthHeaders(), 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } });
+  const cacheKey = `resume-${id}`;
+  
+  // Try cache first
+  const cached = getFromCache(cacheKey);
+  if (cached) return cached;
+
+  const res = await fetch(`/api/resumes/${id}`, { 
+    headers: { ...getAuthHeaders(), 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } 
+  });
   if (res.status === 401) throw new Error('Unauthenticated');
   if (!res.ok) throw new Error('Failed to load resume');
-  return res.json();
+  
+  const data = await res.json();
+  setCache(cacheKey, data);
+  return data;
 }
 
 export async function createResume(data: any) {
@@ -54,6 +85,8 @@ export async function createResume(data: any) {
   });
   if (res.status === 401) throw new Error('Unauthenticated');
   if (!res.ok) throw new Error('Failed to create resume');
+  clearCache('resume');
+  clearCache('list-resumes');
   return res.json();
 }
 
@@ -65,6 +98,8 @@ export async function updateResume(id: number | string, data: any) {
   });
   if (res.status === 401) throw new Error('Unauthenticated');
   if (!res.ok) throw new Error('Failed to update resume');
+  clearCache('resume');
+  clearCache('list-resumes');
   return res.json();
 }
 
@@ -75,5 +110,7 @@ export async function deleteResume(id: number | string) {
   });
   if (res.status === 401) throw new Error('Unauthenticated');
   if (!res.ok) throw new Error('Failed to delete resume');
+  clearCache('resume');
+  clearCache('list-resumes');
   return true;
 }

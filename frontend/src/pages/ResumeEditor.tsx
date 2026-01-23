@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useParams, useNavigate } from 'react-router-dom';
 import ResumePreview from '../components/ResumePreview';
@@ -56,7 +56,7 @@ export default function ResumeEditor() {
   const previewRef = useRef<HTMLDivElement>(null);
   const onPrint = useReactToPrint({ content: () => previewRef.current });
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = useCallback(async (data: any) => {
     setSaving(true);
     try {
       const payload = { ...data };
@@ -82,9 +82,10 @@ export default function ResumeEditor() {
     } finally {
       setSaving(false);
     }
-  };
+  }, [params.id, navigate]);
 
   const formValues = watch();
+  const memoizedPreview = useMemo(() => <ResumePreview resume={formValues} />, [formValues]);
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
@@ -275,7 +276,7 @@ export default function ResumeEditor() {
             <div>
               <h3 className="text-lg font-semibold mb-3">Pre-visualizacao</h3>
               <div ref={previewRef} className="bg-white border rounded p-4">
-                <ResumePreview resume={formValues} />
+                {memoizedPreview}
               </div>
             </div>
           </div>
