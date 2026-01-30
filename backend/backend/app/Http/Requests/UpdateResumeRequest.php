@@ -109,6 +109,8 @@ class UpdateResumeRequest extends FormRequest
             'education.*.diploma' => 'nullable|string|max:255',
             'education.*.area' => 'nullable|string|max:255',
             'education.*.period' => 'nullable|string|max:255',
+            'sidebar_bg_color' => 'nullable|string|max:20',
+            'sidebar_text_color' => 'nullable|string|max:20',
             'licenses' => 'nullable|array',
             'licenses.*.name' => 'nullable|string|max:255',
             'licenses.*.issuer' => 'nullable|string|max:255',

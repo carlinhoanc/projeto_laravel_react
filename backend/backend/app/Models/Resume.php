@@ -22,6 +22,8 @@ class Resume extends Model
         'interests',
         'photo_path',
         'photo_blob',
+        'sidebar_bg_color',
+        'sidebar_text_color',
     ];
 
     protected $casts = [
