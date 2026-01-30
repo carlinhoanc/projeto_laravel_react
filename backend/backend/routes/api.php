@@ -22,4 +22,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Resume resource routes
     Route::apiResource('resumes', \App\Http\Controllers\Api\ResumeController::class);
+    // Allow POST with _method=PUT for FormData updates
+    Route::post('/resumes/{resume}', [\App\Http\Controllers\Api\ResumeController::class, 'update']);
 });
