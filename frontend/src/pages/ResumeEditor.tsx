@@ -65,6 +65,7 @@ export default function ResumeEditor() {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
   const [selectedPhotoFile, setSelectedPhotoFile] = useState<File | null>(null);
+  const [croppedPhotoFile, setCroppedPhotoFile] = useState<File | null>(null);
   const params = useParams();
   const navigate = useNavigate();
 
@@ -113,6 +114,7 @@ export default function ResumeEditor() {
   const handlePhotoSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
+      setCroppedPhotoFile(null);
       setSelectedPhotoFile(files[0]);
       setShowPhotoModal(true);
     }
@@ -120,31 +122,21 @@ export default function ResumeEditor() {
 
   const handlePhotoModalClose = useCallback(() => {
     setShowPhotoModal(false);
-    setSelectedPhotoFile(null);
-    // Limpar o input
-    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
-    if (input) input.value = '';
   }, []);
 
   const handleCropComplete = useCallback((croppedBlob: Blob) => {
+    console.log('handleCropComplete called with blob size:', croppedBlob.size);
     // Converter blob para File
     const croppedFile = new File([croppedBlob], 'photo.jpg', { type: 'image/jpeg' });
+    console.log('Created cropped file:', croppedFile.name, croppedFile.size);
+    setCroppedPhotoFile(croppedFile);
     
-    // Atualizar o valor do formulário usando FileList via DataTransfer
-    const dataTransfer = new DataTransfer();
-    dataTransfer.items.add(croppedFile);
-    
-    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
-    if (input) {
-      input.files = dataTransfer.files;
-      // Disparar evento de mudança para notificar o react-hook-form
-      const event = new Event('change', { bubbles: true });
-      input.dispatchEvent(event);
-    }
-
     // Atualizar preview
     const objectUrl = URL.createObjectURL(croppedBlob);
     setPhotoPreview(objectUrl);
+    
+    // Fechar o modal
+    setShowPhotoModal(false);
   }, []);
 
   const onSubmit = useCallback(async (data: any) => {
@@ -174,8 +166,12 @@ export default function ResumeEditor() {
       console.log('Rest data to append:', rest);
       Object.entries(rest).forEach(([key, value]) => appendFormData(formData, value, key));
 
-      if (photo && (photo as FileList).length > 0) {
-        formData.append('photo', (photo as FileList)[0]);
+      console.log('croppedPhotoFile:', croppedPhotoFile);
+      if (croppedPhotoFile) {
+        console.log('Appending cropped photo:', croppedPhotoFile.name, croppedPhotoFile.size);
+        formData.append('photo', croppedPhotoFile);
+      } else {
+        console.log('No cropped photo file to append');
       }
 
       const formDataEntries = Array.from(formData.entries()).map(([k, v]) => [k, v instanceof File ? `[File: ${v.name}]` : v]);
@@ -198,7 +194,7 @@ export default function ResumeEditor() {
     } finally {
       setSaving(false);
     }
-  }, [params.id, navigate]);
+  }, [params.id, navigate, croppedPhotoFile]);
 
   const formValues = watch();
   const resumeForPreview = useMemo(() => ({

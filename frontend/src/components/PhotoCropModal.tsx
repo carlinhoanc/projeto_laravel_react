@@ -69,25 +69,44 @@ export default function PhotoCropModal({
   }, []);
 
   const handleCrop = useCallback(async () => {
-    if (!canvasRef.current || !imageRef.current) return;
+    console.log('PhotoCropModal: handleCrop called');
+    if (!canvasRef.current || !imageRef.current) {
+      console.log('PhotoCropModal: canvas or image ref not available');
+      return;
+    }
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    if (!ctx) {
+      console.log('PhotoCropModal: no canvas context');
+      return;
+    }
 
     const img = imageRef.current;
+    const container = containerRef.current;
+    if (!container) {
+      console.log('PhotoCropModal: no container ref');
+      return;
+    }
 
-    // Calcular a posição da imagem e seu tamanho renderizado
-    const renderedWidth = img.width;
-    const renderedHeight = img.height;
-    
-    // Converter offset de pixels do container para coordenadas da imagem
-    const sourceX = Math.max(0, (-offsetX / renderedWidth) * imageNaturalSize.width);
-    const sourceY = Math.max(0, (-offsetY / renderedHeight) * imageNaturalSize.height);
-    
-    // O tamanho da área que queremos pegar
-    const sourceWidth = (CROP_SIZE / renderedWidth) * imageNaturalSize.width;
-    const sourceHeight = (CROP_SIZE / renderedHeight) * imageNaturalSize.height;
+    // Usar dimensões reais renderizadas (inclui transform/zoom)
+    const imageRect = img.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+
+    const scaleX = imageNaturalSize.width / imageRect.width;
+    const scaleY = imageNaturalSize.height / imageRect.height;
+
+    // Converter coordenadas do container para coordenadas da imagem
+    const sourceX = (containerRect.left - imageRect.left) * scaleX;
+    const sourceY = (containerRect.top - imageRect.top) * scaleY;
+    const sourceWidth = containerRect.width * scaleX;
+    const sourceHeight = containerRect.height * scaleY;
+
+    console.log('PhotoCropModal: crop area:', { sourceX, sourceY, sourceWidth, sourceHeight });
+
+    // Clamp para não extrapolar a imagem
+    const clampedX = Math.max(0, Math.min(sourceX, imageNaturalSize.width - sourceWidth));
+    const clampedY = Math.max(0, Math.min(sourceY, imageNaturalSize.height - sourceHeight));
 
     // Limpar canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -95,8 +114,8 @@ export default function PhotoCropModal({
     // Desenhar a área cropada
     ctx.drawImage(
       img,
-      sourceX,
-      sourceY,
+      clampedX,
+      clampedY,
       sourceWidth,
       sourceHeight,
       0,
@@ -107,8 +126,10 @@ export default function PhotoCropModal({
 
     canvas.toBlob((blob) => {
       if (blob) {
+        console.log('PhotoCropModal: blob created, size:', blob.size);
         onCropComplete(blob);
-        handleClose();
+      } else {
+        console.log('PhotoCropModal: failed to create blob');
       }
     }, 'image/jpeg', 0.9);
   }, [offsetX, offsetY, imageNaturalSize, onCropComplete]);
