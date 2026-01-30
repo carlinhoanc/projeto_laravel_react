@@ -14,10 +14,11 @@ export function removeAuthToken(): void {
   localStorage.removeItem('auth_token');
 }
 
-export function getAuthHeaders(): Record<string, string> {
+export function getAuthHeaders(options: { includeContentType?: boolean } = {}): Record<string, string> {
+  const { includeContentType = true } = options;
   const token = getAuthToken();
   return {
-    'Content-Type': 'application/json',
+    ...(includeContentType ? { 'Content-Type': 'application/json' } : {}),
     ...(token && { Authorization: `Bearer ${token}` }),
   };
 }

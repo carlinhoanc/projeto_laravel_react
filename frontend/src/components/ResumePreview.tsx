@@ -5,10 +5,16 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
   const skills = resume?.skills || [];
   const education = resume?.education || [];
   const experience = resume?.experience || [];
+  const photoUrl = resume?.photo_url;
 
   return (
     <div ref={ref} className="resume-preview max-w-4xl mx-auto flex gap-6">
       <aside className="w-1/3 bg-gray-100 p-4">
+        {photoUrl && (
+          <div className="mb-4">
+            <img src={photoUrl} alt="Foto do perfil" className="w-32 h-32 object-cover rounded-full border" />
+          </div>
+        )}
         <div className="mb-4">
           <h2 className="text-xl font-bold">{p.name}</h2>
           <div className="text-sm text-gray-600">{p.city} {p.country && ", " + p.country}</div>
@@ -32,7 +38,7 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
         )}
 
         <div className="mb-4">
-          <h3 className="font-semibold">Principais Competências</h3>
+          <h3 className="font-semibold">Principais Competencias</h3>
           <div className="flex flex-wrap gap-2 mt-2">
             {skills.map((s: string, i: number) => (
               <span key={i} className="text-sm bg-blue-100 px-2 py-1 rounded">{s}</span>
@@ -48,7 +54,7 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
         </div>
 
         <div className="mb-4">
-          <h3 className="text-lg font-semibold">Experiência Profissional</h3>
+          <h3 className="text-lg font-semibold">Experiencia Profissional</h3>
           <div className="space-y-3 mt-2">
             {experience.map((e: any, i: number) => (
               <div key={i}>
@@ -63,7 +69,7 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold">Formação</h3>
+          <h3 className="text-lg font-semibold">Formacao</h3>
           <div className="mt-2 space-y-2">
             {education.map((ed: any, i: number) => (
               <div key={i}>

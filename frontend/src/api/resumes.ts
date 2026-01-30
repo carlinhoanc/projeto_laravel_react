@@ -78,26 +78,44 @@ export async function getResume(id: number | string) {
 }
 
 export async function createResume(data: any) {
+  const isFormData = typeof FormData !== 'undefined' && data instanceof FormData;
+  const authHeaders = getAuthHeaders({ includeContentType: !isFormData });
   const res = await fetch(`/api/resumes`, {
     method: 'POST',
-    headers: { ...getAuthHeaders(), 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
+    headers: { ...authHeaders, 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+    body: isFormData ? data : JSON.stringify(data),
   });
   if (res.status === 401) throw new Error('Unauthenticated');
-  if (!res.ok) throw new Error('Failed to create resume');
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error('Create resume error:', res.status, errorText);
+    throw new Error(`Failed to create resume (status ${res.status}): ${errorText}`);
+  }
   clearCache('resume');
   clearCache('list-resumes');
   return res.json();
 }
 
 export async function updateResume(id: number | string, data: any) {
+  const isFormData = typeof FormData !== 'undefined' && data instanceof FormData;
+  const authHeaders = getAuthHeaders({ includeContentType: !isFormData });
+  
+  // Para FormData, usar POST com _method=PUT (Laravel não processa FormData corretamente em PUT direto)
+  if (isFormData) {
+    data.append('_method', 'PUT');
+  }
+  
   const res = await fetch(`/api/resumes/${id}`, {
-    method: 'PUT',
-    headers: { ...getAuthHeaders(), 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
+    method: isFormData ? 'POST' : 'PUT',
+    headers: { ...authHeaders, 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+    body: isFormData ? data : JSON.stringify(data),
   });
   if (res.status === 401) throw new Error('Unauthenticated');
-  if (!res.ok) throw new Error('Failed to update resume');
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error('Update resume error:', res.status, errorText);
+    throw new Error(`Failed to update resume (status ${res.status}): ${errorText}`);
+  }
   clearCache('resume');
   clearCache('list-resumes');
   return res.json();

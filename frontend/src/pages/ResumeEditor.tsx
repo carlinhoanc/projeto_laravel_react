@@ -2,8 +2,46 @@ import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useParams, useNavigate } from 'react-router-dom';
 import ResumePreview from '../components/ResumePreview';
+import PhotoCropModal from '../components/PhotoCropModal';
 import { useReactToPrint } from 'react-to-print';
 import * as resumesApi from '../api/resumes';
+
+function appendFormData(formData: FormData, value: any, key?: string) {
+  if (value === undefined || value === null || key === undefined) return;
+
+  if (value instanceof Date) {
+    formData.append(key, value.toISOString());
+    return;
+  }
+
+  if (value instanceof Blob) {
+    formData.append(key, value);
+    return;
+  }
+
+  // Campos que devem ser enviados como JSON
+  const jsonFields = ['personal_info', 'social_links', 'experience', 'education', 'licenses', 'skills', 'interests'];
+  if (jsonFields.includes(key)) {
+    formData.append(key, JSON.stringify(value));
+    return;
+  }
+
+  if (Array.isArray(value) || value instanceof FileList) {
+    if (Array.from(value).length === 0) {
+      formData.append(key, JSON.stringify([]));
+      return;
+    }
+    formData.append(key, JSON.stringify(Array.from(value)));
+    return;
+  }
+
+  if (typeof value === 'object') {
+    formData.append(key, JSON.stringify(value));
+    return;
+  }
+
+  formData.append(key, value as any);
+}
 
 export default function ResumeEditor() {
   const { register, control, handleSubmit, watch, reset, formState: { errors } } = useForm<any>({
@@ -22,6 +60,9 @@ export default function ResumeEditor() {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [showPhotoModal, setShowPhotoModal] = useState(false);
+  const [selectedPhotoFile, setSelectedPhotoFile] = useState<File | null>(null);
   const params = useParams();
   const navigate = useNavigate();
 
@@ -36,7 +77,16 @@ export default function ResumeEditor() {
           console.log('ResumeEditor: loaded data', data);
           const resume = data.data ? data.data : data;
           console.log('ResumeEditor: extracted resume', resume);
-          reset(resume);
+          reset({
+            ...resume,
+            experience: resume.experience || [],
+            education: resume.education || [],
+            skills: resume.skills && resume.skills.length > 0 ? resume.skills : [''],
+            social_links: resume.social_links && resume.social_links.length > 0 ? resume.social_links : [''],
+            licenses: resume.licenses || [],
+            interests: resume.interests || [],
+          });
+          setPhotoPreview(resume.photo_url || null);
           console.log('ResumeEditor: form reset complete');
         } catch (e: any) {
           console.error('ResumeEditor: Failed to load resume', e);
@@ -56,10 +106,59 @@ export default function ResumeEditor() {
   const previewRef = useRef<HTMLDivElement>(null);
   const onPrint = useReactToPrint({ content: () => previewRef.current });
 
+  const watchedPhoto = watch('photo');
+
+  const handlePhotoSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      setSelectedPhotoFile(files[0]);
+      setShowPhotoModal(true);
+    }
+  }, []);
+
+  const handlePhotoModalClose = useCallback(() => {
+    setShowPhotoModal(false);
+    setSelectedPhotoFile(null);
+    // Limpar o input
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+    if (input) input.value = '';
+  }, []);
+
+  const handleCropComplete = useCallback((croppedBlob: Blob) => {
+    // Converter blob para File
+    const croppedFile = new File([croppedBlob], 'photo.jpg', { type: 'image/jpeg' });
+    
+    // Atualizar o valor do formulário usando FileList via DataTransfer
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(croppedFile);
+    
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+    if (input) {
+      input.files = dataTransfer.files;
+      // Disparar evento de mudança para notificar o react-hook-form
+      const event = new Event('change', { bubbles: true });
+      input.dispatchEvent(event);
+    }
+
+    // Atualizar preview
+    const objectUrl = URL.createObjectURL(croppedBlob);
+    setPhotoPreview(objectUrl);
+  }, []);
+
   const onSubmit = useCallback(async (data: any) => {
     setSaving(true);
     try {
       const payload = { ...data };
+      
+      // Remover campos que não devem ser salvos
+      delete payload.id;
+      delete payload.user_id;
+      delete payload.created_at;
+      delete payload.updated_at;
+      delete payload.user;
+      
+      console.log('Payload after cleanup:', payload);
+      
       if (Array.isArray(payload.skills)) {
         payload.skills = payload.skills.filter((s: string) => !!s && s.trim() !== '');
       }
@@ -67,11 +166,26 @@ export default function ResumeEditor() {
         payload.social_links = payload.social_links.filter((s: string) => !!s && s.trim() !== '');
       }
 
+      const formData = new FormData();
+      const { photo, photo_url, photo_path, ...rest } = payload as any;
+
+      console.log('Rest data to append:', rest);
+      Object.entries(rest).forEach(([key, value]) => appendFormData(formData, value, key));
+
+      if (photo && (photo as FileList).length > 0) {
+        formData.append('photo', (photo as FileList)[0]);
+      }
+
+      const formDataEntries = Array.from(formData.entries()).map(([k, v]) => [k, v instanceof File ? `[File: ${v.name}]` : v]);
+      console.log('FormData entries:', formDataEntries);
+
       if (params.id) {
-        await resumesApi.updateResume(params.id, payload);
+        const result = await resumesApi.updateResume(params.id, formData);
+        console.log('Update response:', result);
         alert('Curriculo atualizado');
       } else {
-        await resumesApi.createResume(payload);
+        const result = await resumesApi.createResume(formData);
+        console.log('Create response:', result);
         alert('Curriculo criado');
       }
       navigate('/resumes');
@@ -85,7 +199,11 @@ export default function ResumeEditor() {
   }, [params.id, navigate]);
 
   const formValues = watch();
-  const memoizedPreview = useMemo(() => <ResumePreview resume={formValues} />, [formValues]);
+  const resumeForPreview = useMemo(() => ({
+    ...formValues,
+    photo_url: photoPreview || (formValues as any)?.photo_url,
+  }), [formValues, photoPreview]);
+  const memoizedPreview = useMemo(() => <ResumePreview resume={resumeForPreview} />, [resumeForPreview]);
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
@@ -109,6 +227,21 @@ export default function ResumeEditor() {
                 <section>
                   <h3 className="text-lg font-semibold mb-3">Dados Pessoais</h3>
                   <div className="space-y-2">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Foto</label>
+                      <input
+                        {...register('photo')}
+                        type="file"
+                        accept="image/*"
+                        onChange={handlePhotoSelect}
+                        className="border p-2 rounded w-full"
+                      />
+                      {photoPreview && (
+                        <div className="mt-2">
+                          <img src={photoPreview} alt="Preview da foto" className="w-24 h-24 object-cover rounded border" />
+                        </div>
+                      )}
+                    </div>
                     <input
                       {...register('personal_info.name', { required: 'Nome obrigatorio' })}
                       placeholder="Nome completo"
@@ -282,6 +415,13 @@ export default function ResumeEditor() {
           </div>
         </>
       )}
+
+      <PhotoCropModal
+        isOpen={showPhotoModal}
+        imageFile={selectedPhotoFile}
+        onClose={handlePhotoModalClose}
+        onCropComplete={handleCropComplete}
+      />
     </div>
   );
 }
