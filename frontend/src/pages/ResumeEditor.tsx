@@ -54,6 +54,8 @@ export default function ResumeEditor() {
       summary: '',
       licenses: [],
       interests: [],
+      sidebar_bg_color: '#f3f4f6',
+      sidebar_text_color: '#111827',
     },
   });
 
@@ -241,6 +243,24 @@ export default function ResumeEditor() {
                           <img src={photoPreview} alt="Preview da foto" className="w-24 h-24 object-cover rounded border" />
                         </div>
                       )}
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Cor de fundo da coluna</label>
+                        <input
+                          {...register('sidebar_bg_color')}
+                          type="color"
+                          className="border p-2 rounded w-full h-12"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Cor da fonte da coluna</label>
+                        <input
+                          {...register('sidebar_text_color')}
+                          type="color"
+                          className="border p-2 rounded w-full h-12"
+                        />
+                      </div>
                     </div>
                     <input
                       {...register('personal_info.name', { required: 'Nome obrigatorio' })}
