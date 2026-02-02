@@ -153,7 +153,7 @@ export default function ResumeEditor() {
     setShowPhotoModal(false);
   }, []);
 
-  const onSubmit = useCallback(async (data: any) => {
+  const onSubmit = useCallback(async (data: any, shouldNavigate: boolean = true) => {
     setSaving(true);
     try {
       const payload = { ...data };
@@ -200,7 +200,9 @@ export default function ResumeEditor() {
         console.log('Create response:', result);
         alert('Curriculo criado');
       }
-      navigate('/resumes');
+      if (shouldNavigate) {
+        navigate('/resumes');
+      }
     } catch (e: any) {
       console.error('Save failed', e);
       const msg = e?.message || 'Falha ao salvar curriculo';
@@ -461,9 +463,21 @@ export default function ResumeEditor() {
                   </div>
                 </section>
 
-                <div className="flex gap-3 pt-4">
-                  <button type="submit" className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" disabled={saving}>
+                <div className="flex gap-3 pt-4 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={handleSubmit((data) => onSubmit(data, false))}
+                    className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                    disabled={saving}
+                  >
                     {saving ? 'Salvando...' : 'Salvar'}
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    disabled={saving}
+                  >
+                    {saving ? 'Salvando...' : 'Salvar e voltar'}
                   </button>
                   <button
                     type="button"
