@@ -8,6 +8,12 @@ Repositório para o projeto fullstack com backend em Laravel (Sanctum) e frontend
 - Frontend: Vite + React + TypeScript + Material UI.
 - Docker Compose inclui serviços para backend, frontend, MySQL e phpMyAdmin.
 
+## Campos e formatos do currículo
+
+- Data de nascimento: salva no banco em `birth_date` e exibida no preview.
+- Períodos de experiência e educação: usar formato MM/AAAA.
+- Telefone: máscara no frontend no formato (99) 99999-9999.
+
 ## Início rápido (desenvolvimento)
 
 Pré-requisitos: Docker e Docker Compose instalados.

@@ -9,6 +9,20 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
   const sidebarBg = resume?.sidebar_bg_color || '#f3f4f6';
   const sidebarText = resume?.sidebar_text_color || '#111827';
 
+  const formatBirthDate = (value?: string) => {
+    if (!value) return null;
+    const str = String(value);
+    if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
+      const [year, month, day] = str.substring(0, 10).split('-');
+      return `${day}/${month}/${year}`;
+    }
+    const date = new Date(str);
+    if (Number.isNaN(date.getTime())) return null;
+    return date.toLocaleDateString('pt-BR');
+  };
+
+  const birthDateLabel = formatBirthDate(resume?.birth_date || p?.birth_date);
+
   return (
     <div ref={ref} className="resume-preview max-w-4xl mx-auto flex gap-6">
       <aside className="w-1/3 p-4" style={{ backgroundColor: sidebarBg, color: sidebarText }}>
@@ -20,9 +34,9 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
         <div className="mb-4">
           <h2 className="text-xl font-bold">{p.name}</h2>
           <div className="text-sm" style={{ color: sidebarText }}>{p.city} {p.country && ", " + p.country}</div>
-          {resume?.birth_date && (
+          {birthDateLabel && (
             <div className="text-sm" style={{ color: sidebarText }}>
-              Nascido em {new Date(resume.birth_date).toLocaleDateString('pt-BR')}
+              Nascido em {birthDateLabel}
             </div>
           )}
         </div>
@@ -71,7 +85,7 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
                   <div className="font-semibold">{e.company}</div>
                   <div className="text-sm text-gray-600">{e.period_start} - {e.period_end}</div>
                 </div>
-                {e.location && <div className="text-sm text-gray-600">?? {e.location}</div>}
+                {e.location && <div className="text-sm text-gray-600">{e.location}</div>}
                 <div className="text-sm text-gray-700">{e.description}</div>
               </div>
             ))}

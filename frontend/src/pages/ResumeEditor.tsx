@@ -71,6 +71,17 @@ export default function ResumeEditor() {
   const params = useParams();
   const navigate = useNavigate();
 
+  const normalizeDateInput = useCallback((value: unknown) => {
+    if (!value) return '';
+    const str = String(value);
+    if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
+      return str.substring(0, 10);
+    }
+    const date = new Date(str);
+    if (Number.isNaN(date.getTime())) return '';
+    return date.toISOString().substring(0, 10);
+  }, []);
+
   useEffect(() => {
     (async () => {
       if (params.id) {
@@ -84,6 +95,7 @@ export default function ResumeEditor() {
           console.log('ResumeEditor: extracted resume', resume);
           reset({
             ...resume,
+            birth_date: normalizeDateInput(resume.birth_date),
             experience: resume.experience || [],
             education: resume.education || [],
             skills: resume.skills && resume.skills.length > 0 ? resume.skills : [''],
@@ -101,7 +113,7 @@ export default function ResumeEditor() {
         }
       }
     })();
-  }, [params.id, reset]);
+  }, [params.id, reset, normalizeDateInput]);
 
   const { fields: expFields, append: expAppend, remove: expRemove } = useFieldArray({ control, name: 'experience' });
   const { fields: edFields, append: edAppend, remove: edRemove } = useFieldArray({ control, name: 'education' });
