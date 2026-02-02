@@ -321,8 +321,18 @@ export default function ResumeEditor() {
                           className="border p-2 rounded w-full mb-2"
                         />
                         <div className="grid grid-cols-2 gap-2 mb-2">
-                          <input {...register(`experience.${idx}.period_start` as const)} placeholder="Inicio" className="border p-2 rounded" />
-                          <input {...register(`experience.${idx}.period_end` as const)} placeholder="Fim" className="border p-2 rounded" />
+                          <MaskedInput
+                            {...register(`experience.${idx}.period_start` as const)}
+                            mask="99/9999"
+                            placeholder="Inicio (MM/AAAA)"
+                            className="border p-2 rounded"
+                          />
+                          <MaskedInput
+                            {...register(`experience.${idx}.period_end` as const)}
+                            mask="99/9999"
+                            placeholder="Fim (MM/AAAA)"
+                            className="border p-2 rounded"
+                          />
                         </div>
                         <textarea {...register(`experience.${idx}.description` as const)} placeholder="Descricao" className="border p-2 rounded w-full mb-2" />
                         <button
@@ -357,8 +367,18 @@ export default function ResumeEditor() {
                         <input {...register(`education.${idx}.diploma` as const)} placeholder="Diploma" className="border p-2 rounded w-full mb-2" />
                         <input {...register(`education.${idx}.location` as const)} placeholder="Local" className="border p-2 rounded w-full mb-2" />
                         <div className="grid grid-cols-2 gap-2 mb-2">
-                          <input {...register(`education.${idx}.period_start` as const)} placeholder="Inicio" className="border p-2 rounded" />
-                          <input {...register(`education.${idx}.period_end` as const)} placeholder="Fim" className="border p-2 rounded" />
+                          <MaskedInput
+                            {...register(`education.${idx}.period_start` as const)}
+                            mask="99/9999"
+                            placeholder="Inicio (MM/AAAA)"
+                            className="border p-2 rounded"
+                          />
+                          <MaskedInput
+                            {...register(`education.${idx}.period_end` as const)}
+                            mask="99/9999"
+                            placeholder="Fim (MM/AAAA)"
+                            className="border p-2 rounded"
+                          />
                         </div>
                         <button
                           type="button"
