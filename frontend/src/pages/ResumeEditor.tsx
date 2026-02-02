@@ -271,7 +271,11 @@ export default function ResumeEditor() {
 
                     <input
                       {...register('personal_info.email', {
-                        pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Email invalido' },
+                        required: 'Email obrigatorio',
+                        pattern: { 
+                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, 
+                          message: 'Email inválido' 
+                        },
                       })}
                       placeholder="Email"
                       className="border p-2 rounded w-full"
