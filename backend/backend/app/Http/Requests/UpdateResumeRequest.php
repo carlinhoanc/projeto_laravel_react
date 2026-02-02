@@ -90,7 +90,7 @@ class UpdateResumeRequest extends FormRequest
         return [
             'personal_info' => 'nullable|array',
             'personal_info.name' => 'nullable|string|max:255',
-            'personal_info.email' => 'nullable|email',
+            'personal_info.email' => 'nullable|email:rfc,dns',
             'personal_info.phone' => 'nullable|string|max:50',
             'personal_info.city' => 'nullable|string|max:255',
             'personal_info.country' => 'nullable|string|max:255',
