@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import ResumePreview from '../components/ResumePreview';
 import PhotoCropModal from '../components/PhotoCropModal';
 import { useReactToPrint } from 'react-to-print';
+import MaskedInput from 'react-input-mask';
 import * as resumesApi from '../api/resumes';
 
 function appendFormData(formData: FormData, value: any, key?: string) {
@@ -279,7 +280,12 @@ export default function ResumeEditor() {
                       <div className="text-sm text-red-600">{(errors as any).personal_info.email.message}</div>
                     )}
 
-                    <input {...register('personal_info.phone')} placeholder="Telefone" className="border p-2 rounded w-full" />
+                    <MaskedInput
+                      {...register('personal_info.phone')}
+                      mask="(99) 99999-9999"
+                      placeholder="Telefone"
+                      className="border p-2 rounded w-full"
+                    />
                     <input {...register('personal_info.city')} placeholder="Cidade" className="border p-2 rounded w-full" />
                     <input {...register('birth_date')} type="date" placeholder="Data de Nascimento" className="border p-2 rounded w-full" />
                   </div>
