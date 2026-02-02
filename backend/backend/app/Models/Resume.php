@@ -13,6 +13,7 @@ class Resume extends Model
     protected $fillable = [
         'user_id',
         'personal_info',
+        'birth_date',
         'social_links',
         'summary',
         'experience',
@@ -28,6 +29,7 @@ class Resume extends Model
 
     protected $casts = [
         'personal_info' => 'array',
+        'birth_date' => 'date',
         'social_links' => 'array',
         'experience' => 'array',
         'education' => 'array',
