@@ -71,6 +71,7 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
                   <div className="font-semibold">{e.company}</div>
                   <div className="text-sm text-gray-600">{e.period_start} - {e.period_end}</div>
                 </div>
+                {e.location && <div className="text-sm text-gray-600">?? {e.location}</div>}
                 <div className="text-sm text-gray-700">{e.description}</div>
               </div>
             ))}

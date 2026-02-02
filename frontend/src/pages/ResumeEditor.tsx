@@ -315,6 +315,11 @@ export default function ResumeEditor() {
                           placeholder="Empresa"
                           className="border p-2 rounded w-full mb-2"
                         />
+                        <input
+                          {...register(`experience.${idx}.location` as const)}
+                          placeholder="Local"
+                          className="border p-2 rounded w-full mb-2"
+                        />
                         <div className="grid grid-cols-2 gap-2 mb-2">
                           <input {...register(`experience.${idx}.period_start` as const)} placeholder="Inicio" className="border p-2 rounded" />
                           <input {...register(`experience.${idx}.period_end` as const)} placeholder="Fim" className="border p-2 rounded" />
