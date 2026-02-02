@@ -84,7 +84,12 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
             {education.map((ed: any, i: number) => (
               <div key={i}>
                 <div className="font-semibold">{ed.institution}</div>
-                <div className="text-sm text-gray-700">{ed.diploma} - {ed.period}</div>
+                <div className="text-sm text-gray-600">
+                  {ed.diploma}
+                  {ed.period_start && ed.period_end && ` (${ed.period_start} - ${ed.period_end})`}
+                  {ed.period && ` - ${ed.period}`}
+                </div>
+                {ed.location && <div className="text-sm text-gray-600">?? {ed.location}</div>}
               </div>
             ))}
           </div>

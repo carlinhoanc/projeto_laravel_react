@@ -355,6 +355,11 @@ export default function ResumeEditor() {
                           className="border p-2 rounded w-full mb-2"
                         />
                         <input {...register(`education.${idx}.diploma` as const)} placeholder="Diploma" className="border p-2 rounded w-full mb-2" />
+                        <input {...register(`education.${idx}.location` as const)} placeholder="Local" className="border p-2 rounded w-full mb-2" />
+                        <div className="grid grid-cols-2 gap-2 mb-2">
+                          <input {...register(`education.${idx}.period_start` as const)} placeholder="Inicio" className="border p-2 rounded" />
+                          <input {...register(`education.${idx}.period_end` as const)} placeholder="Fim" className="border p-2 rounded" />
+                        </div>
                         <button
                           type="button"
                           onClick={() => edRemove(idx)}
@@ -366,7 +371,7 @@ export default function ResumeEditor() {
                     ))}
                     <button
                       type="button"
-                      onClick={() => edAppend({ institution: '', diploma: '', area: '' })}
+                      onClick={() => edAppend({ institution: '', diploma: '', area: '', location: '', period_start: '', period_end: '' })}
                       className="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
                     >
                       + Adicionar Educacao
