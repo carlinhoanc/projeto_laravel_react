@@ -47,6 +47,7 @@ export default function ResumeEditor() {
   const { register, control, handleSubmit, watch, reset, formState: { errors } } = useForm<any>({
     defaultValues: {
       personal_info: { name: '', email: '', phone: '', city: '', country: '' },
+      birth_date: '',
       experience: [],
       education: [],
       skills: [''],
@@ -280,6 +281,7 @@ export default function ResumeEditor() {
 
                     <input {...register('personal_info.phone')} placeholder="Telefone" className="border p-2 rounded w-full" />
                     <input {...register('personal_info.city')} placeholder="Cidade" className="border p-2 rounded w-full" />
+                    <input {...register('birth_date')} type="date" placeholder="Data de Nascimento" className="border p-2 rounded w-full" />
                   </div>
                 </section>
 

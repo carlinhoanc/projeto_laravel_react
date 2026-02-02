@@ -20,6 +20,11 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
         <div className="mb-4">
           <h2 className="text-xl font-bold">{p.name}</h2>
           <div className="text-sm" style={{ color: sidebarText }}>{p.city} {p.country && ", " + p.country}</div>
+          {resume?.birth_date && (
+            <div className="text-sm" style={{ color: sidebarText }}>
+              Nascido em {new Date(resume.birth_date).toLocaleDateString('pt-BR')}
+            </div>
+          )}
         </div>
 
         <div className="mb-4">
