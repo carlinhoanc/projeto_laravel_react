@@ -71,6 +71,7 @@ export default function ResumeEditor() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [selectedPhotoFile, setSelectedPhotoFile] = useState<File | null>(null);
   const [croppedPhotoFile, setCroppedPhotoFile] = useState<File | null>(null);
   const params = useParams();
@@ -258,9 +259,7 @@ export default function ResumeEditor() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-8">
-            <div>
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <section>
                   <h3 className="text-lg font-semibold mb-3">Dados Pessoais</h3>
                   <div className="space-y-2">
@@ -510,6 +509,13 @@ export default function ResumeEditor() {
                   </button>
                   <button
                     type="button"
+                    onClick={() => setShowPreviewModal(true)}
+                    className="px-6 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+                  >
+                    👁️ Pré-visualizar
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => onPrint?.()}
                     className="px-6 py-2 bg-gray-800 text-white rounded hover:bg-gray-900"
                   >
@@ -517,15 +523,6 @@ export default function ResumeEditor() {
                   </button>
                 </div>
               </form>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold mb-3">Pré-visualização</h3>
-              <div ref={previewRef} className="bg-white border rounded p-4">
-                {memoizedPreview}
-              </div>
-            </div>
-          </div>
         </>
       )}
 
@@ -535,6 +532,34 @@ export default function ResumeEditor() {
         onClose={handlePhotoModalClose}
         onCropComplete={handleCropComplete}
       />
+
+      {/* Modal de Pré-visualização */}
+      {showPreviewModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={() => setShowPreviewModal(false)}>
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
+              <h3 className="text-xl font-semibold">Pré-visualização do Currículo</h3>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => onPrint?.()}
+                  className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-900"
+                >
+                  📄 Baixar PDF
+                </button>
+                <button
+                  onClick={() => setShowPreviewModal(false)}
+                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+                >
+                  ✕ Fechar
+                </button>
+              </div>
+            </div>
+            <div ref={previewRef} className="p-6">
+              {memoizedPreview}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
