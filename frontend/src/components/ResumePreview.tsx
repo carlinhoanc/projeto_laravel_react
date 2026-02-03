@@ -73,7 +73,7 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
       <main className="w-2/3 bg-white p-4">
         <div className="mb-4">
           <h3 className="text-lg font-semibold">Resumo</h3>
-          <p className="text-sm text-gray-800">{resume?.summary}</p>
+          <div className="text-sm text-gray-800" dangerouslySetInnerHTML={{ __html: resume?.summary || '' }} />
         </div>
 
         <div className="mb-4">
@@ -86,7 +86,7 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
                   <div className="text-sm text-gray-600">{e.period_start} - {e.period_end}</div>
                 </div>
                 {e.location && <div className="text-sm text-gray-600">{e.location}</div>}
-                <div className="text-sm text-gray-700">{e.description}</div>
+                <div className="text-sm text-gray-700" dangerouslySetInnerHTML={{ __html: e.description || '' }} />
               </div>
             ))}
           </div>

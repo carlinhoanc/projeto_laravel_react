@@ -343,11 +343,12 @@ export default function ResumeEditor() {
 
                 <section>
                   <h3 className="text-lg font-semibold mb-3">Resumo Profissional</h3>
+                  <p className="text-xs text-gray-600 mb-2">💡 Você pode usar HTML: &lt;b&gt;negrito&lt;/b&gt;, &lt;i&gt;itálico&lt;/i&gt;, &lt;br/&gt; para quebra de linha, &lt;ul&gt;&lt;li&gt;listas&lt;/li&gt;&lt;/ul&gt;</p>
                   <textarea
                     {...register('summary')}
-                    placeholder="Resumo breve sobre você"
-                    rows={3}
-                    className="border p-2 rounded w-full"
+                    placeholder="Resumo breve sobre você (aceita HTML)"
+                    rows={5}
+                    className="border p-2 rounded w-full font-mono text-sm"
                   />
                 </section>
 
@@ -385,7 +386,15 @@ export default function ResumeEditor() {
                             className="border p-2 rounded"
                           />
                         </div>
-                        <textarea {...register(`experience.${idx}.description` as const)} placeholder="Descrição" className="border p-2 rounded w-full mb-2" />
+                        <div className="mb-2">
+                          <label className="text-xs text-gray-600 mb-1 block">💡 Descrição (aceita HTML: &lt;b&gt;negrito&lt;/b&gt;, &lt;ul&gt;&lt;li&gt;lista&lt;/li&gt;&lt;/ul&gt;, etc)</label>
+                          <textarea 
+                            {...register(`experience.${idx}.description` as const)} 
+                            placeholder="Descrição" 
+                            rows={4}
+                            className="border p-2 rounded w-full font-mono text-sm" 
+                          />
+                        </div>
                         <button
                           type="button"
                           onClick={() => expRemove(idx)}
