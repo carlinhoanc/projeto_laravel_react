@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+ï»¿import React, { useState, useCallback, useRef, useEffect } from 'react';
 
 interface PhotoCropModalProps {
   isOpen: boolean;
@@ -89,7 +89,7 @@ export default function PhotoCropModal({
       return;
     }
 
-    // Usar dimensões reais renderizadas (inclui transform/zoom)
+    // Usar dimensï¿½es reais renderizadas (inclui transform/zoom)
     const imageRect = img.getBoundingClientRect();
     const containerRect = container.getBoundingClientRect();
 
@@ -104,14 +104,14 @@ export default function PhotoCropModal({
 
     console.log('PhotoCropModal: crop area:', { sourceX, sourceY, sourceWidth, sourceHeight });
 
-    // Clamp para não extrapolar a imagem
+    // Clamp para nï¿½o extrapolar a imagem
     const clampedX = Math.max(0, Math.min(sourceX, imageNaturalSize.width - sourceWidth));
     const clampedY = Math.max(0, Math.min(sourceY, imageNaturalSize.height - sourceHeight));
 
     // Limpar canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Desenhar a área cropada
+    // Desenhar a ï¿½rea cropada
     ctx.drawImage(
       img,
       clampedX,
@@ -164,7 +164,7 @@ export default function PhotoCropModal({
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
             >
-              {/* Imagem com transformações */}
+              {/* Imagem com transformaï¿½ï¿½es */}
               <img
                 ref={imageRef}
                 src={imageSrc}
@@ -213,7 +213,7 @@ export default function PhotoCropModal({
               </p>
             </div>
 
-            {/* Botões */}
+            {/* Botï¿½es */}
             <div className="flex gap-3 pt-4">
               <button
                 onClick={handleClose}

@@ -1,3 +1,7 @@
-test('sanity check', () => {
-  expect(1 + 1).toBe(2);
+import { describe, it, expect } from 'vitest';
+
+describe('ResumeEditor tests', () => {
+  it('sanity check', () => {
+    expect(1 + 1).toBe(2);
+  });
 });

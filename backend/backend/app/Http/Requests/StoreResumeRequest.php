@@ -50,11 +50,12 @@ class StoreResumeRequest extends FormRequest
         foreach ($jsonFields as $field) {
             $value = $this->input($field);
             Log::info('Checking field', ['field' => $field, 'value' => $value, 'is_string' => is_string($value)]);
-            if (is_string($value) && !empty($value)) {
+            if (is_string($value)) {
                 try {
                     $decoded = json_decode($value, true);
                     if (json_last_error() === JSON_ERROR_NONE) {
                         $toMerge[$field] = $decoded;
+                        Log::info('Successfully decoded field', ['field' => $field, 'decoded' => $decoded]);
                     }
                 } catch (\Exception $e) {
                     // Se não conseguir desserializar, deixa como está
@@ -87,6 +88,7 @@ class StoreResumeRequest extends FormRequest
             'summary' => 'nullable|string',
             'experience' => 'nullable|array',
             'experience.*.company' => 'nullable|string|max:255',
+            'experience.*.title' => 'nullable|string|max:255',
             'experience.*.period_start' => 'nullable|string',
             'experience.*.period_end' => 'nullable|string',
             'experience.*.location' => 'nullable|string|max:255',
@@ -95,7 +97,9 @@ class StoreResumeRequest extends FormRequest
             'education.*.institution' => 'nullable|string|max:255',
             'education.*.diploma' => 'nullable|string|max:255',
             'education.*.area' => 'nullable|string|max:255',
-            'education.*.period' => 'nullable|string|max:255',
+            'education.*.location' => 'nullable|string|max:255',
+            'education.*.period_start' => 'nullable|string',
+            'education.*.period_end' => 'nullable|string',
             'sidebar_bg_color' => 'nullable|string|max:20',
             'sidebar_text_color' => 'nullable|string|max:20',
             'licenses' => 'nullable|array',

@@ -23,7 +23,12 @@ function appendFormData(formData: FormData, value: any, key?: string) {
   // Campos que devem ser enviados como JSON
   const jsonFields = ['personal_info', 'social_links', 'experience', 'education', 'licenses', 'skills', 'interests'];
   if (jsonFields.includes(key)) {
-    formData.append(key, JSON.stringify(value));
+    const jsonStr = JSON.stringify(value);
+    if (key === 'education' || key === 'experience') {
+      console.log(`${key} field being serialized:`, value);
+      console.log(`${key} JSON:`, jsonStr);
+    }
+    formData.append(key, jsonStr);
     return;
   }
 
@@ -82,6 +87,30 @@ export default function ResumeEditor() {
     return date.toISOString().substring(0, 10);
   }, []);
 
+  const normalizeEducation = useCallback((education: any) => {
+    if (!Array.isArray(education)) return [];
+    return education.map(item => ({
+      institution: item.institution || '',
+      diploma: item.diploma || '',
+      area: item.area || '',
+      location: item.location || '',
+      period_start: item.period_start || '',
+      period_end: item.period_end || '',
+    }));
+  }, []);
+
+  const normalizeExperience = useCallback((experience: any) => {
+    if (!Array.isArray(experience)) return [];
+    return experience.map(item => ({
+      company: item.company || '',
+      title: item.title || '',
+      description: item.description || '',
+      location: item.location || '',
+      period_start: item.period_start || '',
+      period_end: item.period_end || '',
+    }));
+  }, []);
+
   useEffect(() => {
     (async () => {
       if (params.id) {
@@ -96,8 +125,8 @@ export default function ResumeEditor() {
           reset({
             ...resume,
             birth_date: normalizeDateInput(resume.birth_date),
-            experience: resume.experience || [],
-            education: resume.education || [],
+            experience: normalizeExperience(resume.experience),
+            education: normalizeEducation(resume.education),
             skills: resume.skills && resume.skills.length > 0 ? resume.skills : [''],
             social_links: resume.social_links && resume.social_links.length > 0 ? resume.social_links : [''],
             licenses: resume.licenses || [],
@@ -107,13 +136,13 @@ export default function ResumeEditor() {
           console.log('ResumeEditor: form reset complete');
         } catch (e: any) {
           console.error('ResumeEditor: Failed to load resume', e);
-          setLoadError(e.message || 'Erro ao carregar currículo');
+          setLoadError(e.message || 'Erro ao carregar currÃ­culo');
         } finally {
           setLoading(false);
         }
       }
     })();
-  }, [params.id, reset, normalizeDateInput]);
+  }, [params.id, reset, normalizeEducation, normalizeExperience]);
 
   const { fields: expFields, append: expAppend, remove: expRemove } = useFieldArray({ control, name: 'experience' });
   const { fields: edFields, append: edAppend, remove: edRemove } = useFieldArray({ control, name: 'education' });
@@ -150,7 +179,7 @@ export default function ResumeEditor() {
     setShowPhotoModal(false);
   }, []);
 
-  const onSubmit = useCallback(async (data: any, shouldNavigate: boolean = true) => {
+  const onSubmit = useCallback(async (data: any) => {
     setSaving(true);
     try {
       const payload = { ...data };
@@ -190,18 +219,16 @@ export default function ResumeEditor() {
       if (params.id) {
         const result = await resumesApi.updateResume(params.id, formData);
         console.log('Update response:', result);
-        alert('Currículo atualizado');
+        alert('CurrÃ­culo atualizado');
       } else {
         const result = await resumesApi.createResume(formData);
         console.log('Create response:', result);
-        alert('Currículo criado');
+        alert('CurrÃ­culo criado');
       }
-      if (shouldNavigate) {
-        navigate('/resumes');
-      }
+      navigate('/resumes');
     } catch (e: any) {
       console.error('Save failed', e);
-      const msg = e?.message || 'Falha ao salvar currículo';
+      const msg = e?.message || 'Falha ao salvar currÃ­culo';
       alert(msg);
     } finally {
       setSaving(false);
@@ -217,7 +244,7 @@ export default function ResumeEditor() {
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Editor de Currículo</h2>
+      <h2 className="text-2xl font-bold mb-4">Editor de CurrÃ­culo</h2>
 
       {loadError && (
         <div className="mb-4 p-3 bg-red-100 text-red-800 rounded">
@@ -227,7 +254,7 @@ export default function ResumeEditor() {
 
       {loading ? (
         <div className="text-center py-12">
-          <p className="text-gray-600">Carregando currículo...</p>
+          <p className="text-gray-600">Carregando currÃ­culo...</p>
         </div>
       ) : (
         <>
@@ -271,7 +298,7 @@ export default function ResumeEditor() {
                       </div>
                     </div>
                     <input
-                      {...register('personal_info.name', { required: 'Nome obrigatório' })}
+                      {...register('personal_info.name', { required: 'Nome obrigatï¿½rio' })}
                       placeholder="Nome completo"
                       className="border p-2 rounded w-full"
                     />
@@ -281,10 +308,10 @@ export default function ResumeEditor() {
 
                     <input
                       {...register('personal_info.email', {
-                        required: 'Email obrigatório',
+                        required: 'Email obrigatï¿½rio',
                         pattern: { 
                           value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, 
-                          message: 'Email inválido' 
+                          message: 'Email invï¿½lido' 
                         },
                       })}
                       placeholder="Email"
@@ -309,20 +336,25 @@ export default function ResumeEditor() {
                   <h3 className="text-lg font-semibold mb-3">Resumo Profissional</h3>
                   <textarea
                     {...register('summary')}
-                    placeholder="Resumo breve sobre você"
+                    placeholder="Resumo breve sobre vocï¿½"
                     rows={3}
                     className="border p-2 rounded w-full"
                   />
                 </section>
 
                 <section>
-                    <h3 className="text-lg font-semibold mb-3">Experiência Profissional</h3>
+                    <h3 className="text-lg font-semibold mb-3">ExperiÃªncia Profissional</h3>
                   <div className="space-y-4">
                     {expFields.map((f, idx) => (
                       <div key={f.id} className="border p-3 rounded bg-gray-50">
                         <input
                           {...register(`experience.${idx}.company` as const)}
                           placeholder="Empresa"
+                          className="border p-2 rounded w-full mb-2"
+                        />
+                        <input
+                          {...register(`experience.${idx}.title` as const)}
+                          placeholder="Cargo"
                           className="border p-2 rounded w-full mb-2"
                         />
                         <input
@@ -334,7 +366,7 @@ export default function ResumeEditor() {
                           <MaskedInput
                             {...register(`experience.${idx}.period_start` as const)}
                             mask="99/9999"
-                            placeholder="Início (MM/AAAA)"
+                            placeholder="InÃ­cio (MM/AAAA)"
                             className="border p-2 rounded"
                           />
                           <MaskedInput
@@ -344,7 +376,7 @@ export default function ResumeEditor() {
                             className="border p-2 rounded"
                           />
                         </div>
-                        <textarea {...register(`experience.${idx}.description` as const)} placeholder="Descrição" className="border p-2 rounded w-full mb-2" />
+                        <textarea {...register(`experience.${idx}.description` as const)} placeholder="Descriï¿½ï¿½o" className="border p-2 rounded w-full mb-2" />
                         <button
                           type="button"
                           onClick={() => expRemove(idx)}
@@ -356,31 +388,32 @@ export default function ResumeEditor() {
                     ))}
                     <button
                       type="button"
-                      onClick={() => expAppend({ company: '', period_start: '', period_end: '', description: '' })}
+                      onClick={() => expAppend({ company: '', title: '', location: '', period_start: '', period_end: '', description: '' })}
                       className="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
                     >
-                      + Adicionar Experiência
+                      + Adicionar ExperiÃªncia
                     </button>
                   </div>
                 </section>
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">Educação</h3>
+                  <h3 className="text-lg font-semibold mb-3">EducaÃ§Ã£o</h3>
                   <div className="space-y-4">
                     {edFields.map((f, idx) => (
                       <div key={f.id} className="border p-3 rounded bg-gray-50">
                         <input
                           {...register(`education.${idx}.institution` as const)}
-                          placeholder="Instituição"
+                          placeholder="InstituiÃ§Ã£o"
                           className="border p-2 rounded w-full mb-2"
                         />
                         <input {...register(`education.${idx}.diploma` as const)} placeholder="Diploma" className="border p-2 rounded w-full mb-2" />
+                        <input {...register(`education.${idx}.area` as const)} placeholder="Ãrea de Estudo" className="border p-2 rounded w-full mb-2" />
                         <input {...register(`education.${idx}.location` as const)} placeholder="Local" className="border p-2 rounded w-full mb-2" />
                         <div className="grid grid-cols-2 gap-2 mb-2">
                           <MaskedInput
                             {...register(`education.${idx}.period_start` as const)}
                             mask="99/9999"
-                            placeholder="Início (MM/AAAA)"
+                            placeholder="InÃ­cio (MM/AAAA)"
                             className="border p-2 rounded"
                           />
                           <MaskedInput
@@ -404,7 +437,7 @@ export default function ResumeEditor() {
                       onClick={() => edAppend({ institution: '', diploma: '', area: '', location: '', period_start: '', period_end: '' })}
                       className="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
                     >
-                      + Adicionar Educação
+                      + Adicionar EducaÃ§Ã£o
                     </button>
                   </div>
                 </section>
@@ -462,7 +495,7 @@ export default function ResumeEditor() {
                 <div className="flex gap-3 pt-4 flex-wrap">
                   <button
                     type="button"
-                    onClick={handleSubmit((data) => onSubmit(data, false))}
+                    onClick={handleSubmit(onSubmit)}
                     className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                     disabled={saving}
                   >
@@ -487,7 +520,7 @@ export default function ResumeEditor() {
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold mb-3">Pré-visualização</h3>
+              <h3 className="text-lg font-semibold mb-3">PrÃ©-visualizaÃ§Ã£o</h3>
               <div ref={previewRef} className="bg-white border rounded p-4">
                 {memoizedPreview}
               </div>

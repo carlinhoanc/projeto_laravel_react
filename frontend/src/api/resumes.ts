@@ -1,4 +1,4 @@
-import { getAuthHeaders, getAuthToken } from '../auth';
+import { getAuthHeaders } from '../auth';
 
 // Simple in-memory cache with TTL (5 minutes)
 const cache = new Map<string, { data: any; timestamp: number }>();
@@ -88,8 +88,14 @@ export async function createResume(data: any) {
   if (res.status === 401) throw new Error('Unauthenticated');
   if (!res.ok) {
     const errorText = await res.text();
-    console.error('Create resume error:', res.status, errorText);
-    throw new Error(`Failed to create resume (status ${res.status}): ${errorText}`);
+    console.error('Create resume error:', { status: res.status, body: errorText });
+    try {
+      const errorJson = JSON.parse(errorText);
+      const messages = errorJson.errors || errorJson.message || errorText;
+      throw new Error(typeof messages === 'string' ? messages : JSON.stringify(messages));
+    } catch {
+      throw new Error(`Failed to create resume (status ${res.status}): ${errorText}`);
+    }
   }
   clearCache('resume');
   clearCache('list-resumes');
@@ -100,7 +106,7 @@ export async function updateResume(id: number | string, data: any) {
   const isFormData = typeof FormData !== 'undefined' && data instanceof FormData;
   const authHeaders = getAuthHeaders({ includeContentType: !isFormData });
   
-  // Para FormData, usar POST com _method=PUT (Laravel não processa FormData corretamente em PUT direto)
+  // Para FormData, usar POST com _method=PUT (Laravel nao processa FormData corretamente em PUT direto)
   if (isFormData) {
     data.append('_method', 'PUT');
   }
@@ -113,8 +119,14 @@ export async function updateResume(id: number | string, data: any) {
   if (res.status === 401) throw new Error('Unauthenticated');
   if (!res.ok) {
     const errorText = await res.text();
-    console.error('Update resume error:', res.status, errorText);
-    throw new Error(`Failed to update resume (status ${res.status}): ${errorText}`);
+    console.error('Update resume error:', { status: res.status, body: errorText });
+    try {
+      const errorJson = JSON.parse(errorText);
+      const messages = errorJson.errors || errorJson.message || errorText;
+      throw new Error(typeof messages === 'string' ? messages : JSON.stringify(messages));
+    } catch {
+      throw new Error(`Failed to update resume (status ${res.status}): ${errorText}`);
+    }
   }
   clearCache('resume');
   clearCache('list-resumes');
