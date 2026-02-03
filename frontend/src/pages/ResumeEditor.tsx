@@ -107,7 +107,7 @@ export default function ResumeEditor() {
           console.log('ResumeEditor: form reset complete');
         } catch (e: any) {
           console.error('ResumeEditor: Failed to load resume', e);
-          setLoadError(e.message || 'Erro ao carregar curriculo');
+          setLoadError(e.message || 'Erro ao carregar currículo');
         } finally {
           setLoading(false);
         }
@@ -140,16 +140,13 @@ export default function ResumeEditor() {
 
   const handleCropComplete = useCallback((croppedBlob: Blob) => {
     console.log('handleCropComplete called with blob size:', croppedBlob.size);
-    // Converter blob para File
     const croppedFile = new File([croppedBlob], 'photo.jpg', { type: 'image/jpeg' });
     console.log('Created cropped file:', croppedFile.name, croppedFile.size);
     setCroppedPhotoFile(croppedFile);
     
-    // Atualizar preview
     const objectUrl = URL.createObjectURL(croppedBlob);
     setPhotoPreview(objectUrl);
     
-    // Fechar o modal
     setShowPhotoModal(false);
   }, []);
 
@@ -158,7 +155,6 @@ export default function ResumeEditor() {
     try {
       const payload = { ...data };
       
-      // Remover campos que não devem ser salvos
       delete payload.id;
       delete payload.user_id;
       delete payload.created_at;
@@ -194,18 +190,18 @@ export default function ResumeEditor() {
       if (params.id) {
         const result = await resumesApi.updateResume(params.id, formData);
         console.log('Update response:', result);
-        alert('Curriculo atualizado');
+        alert('Currículo atualizado');
       } else {
         const result = await resumesApi.createResume(formData);
         console.log('Create response:', result);
-        alert('Curriculo criado');
+        alert('Currículo criado');
       }
       if (shouldNavigate) {
         navigate('/resumes');
       }
     } catch (e: any) {
       console.error('Save failed', e);
-      const msg = e?.message || 'Falha ao salvar curriculo';
+      const msg = e?.message || 'Falha ao salvar currículo';
       alert(msg);
     } finally {
       setSaving(false);
