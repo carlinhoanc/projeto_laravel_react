@@ -25,17 +25,17 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
 
   return (
     <div ref={ref} className="resume-preview max-w-4xl mx-auto flex gap-6">
-      <aside className="w-1/3 p-4" style={{ backgroundColor: sidebarBg, color: sidebarText }}>
+      <aside className="w-1/3 p-4 break-words" style={{ backgroundColor: sidebarBg, color: sidebarText }}>
         {photoUrl && (
           <div className="mb-4">
             <img src={photoUrl} alt="Foto do perfil" className="w-32 h-32 object-cover rounded-full border" />
           </div>
         )}
         <div className="mb-4">
-          <h2 className="text-xl font-bold">{p.name}</h2>
-          <div className="text-sm" style={{ color: sidebarText }}>{p.city} {p.country && ", " + p.country}</div>
+          <h2 className="text-xl font-bold break-words">{p.name}</h2>
+          <div className="text-sm break-words" style={{ color: sidebarText }}>{p.city} {p.country && ", " + p.country}</div>
           {birthDateLabel && (
-            <div className="text-sm" style={{ color: sidebarText }}>
+            <div className="text-sm break-words" style={{ color: sidebarText }}>
               Nascido em {birthDateLabel}
             </div>
           )}
@@ -43,8 +43,8 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
 
         <div className="mb-4">
           <h3 className="font-semibold">Contato</h3>
-          <div className="text-sm" style={{ color: sidebarText }}>{p.email}</div>
-          <div className="text-sm" style={{ color: sidebarText }}>{p.phone}</div>
+          <div className="text-sm break-words overflow-hidden" style={{ color: sidebarText }}>{p.email}</div>
+          <div className="text-sm break-words overflow-hidden" style={{ color: sidebarText }}>{p.phone}</div>
         </div>
 
         {resume?.social_links && resume.social_links.length > 0 && (
@@ -52,7 +52,7 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
             <h3 className="font-semibold">Links</h3>
             <div className="text-sm mt-1" style={{ color: sidebarText }}>
               {resume.social_links.map((l: string, i: number) => (
-                <div key={i}><a href={l} target="_blank" rel="noreferrer" className="underline" style={{ color: sidebarText }}>{l}</a></div>
+                <div key={i} className="break-words overflow-hidden"><a href={l} target="_blank" rel="noreferrer" className="underline break-words" style={{ color: sidebarText }}>{l}</a></div>
               ))}
             </div>
           </div>
@@ -62,7 +62,7 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
           <h3 className="font-semibold">Principais Competências</h3>
           <div className="flex flex-wrap gap-2 mt-2">
             {skills.map((s: string, i: number) => (
-              <span key={i} className="text-sm px-2 py-1 rounded" style={{ backgroundColor: 'rgba(59, 130, 246, 0.15)', color: sidebarText }}>
+              <span key={i} className="text-sm px-2 py-1 rounded break-words" style={{ backgroundColor: 'rgba(59, 130, 246, 0.15)', color: sidebarText }}>
                 {s}
               </span>
             ))}
