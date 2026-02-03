@@ -71,16 +71,16 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
       </aside>
 
       <main className="w-2/3 bg-white p-4">
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold">Resumo</h3>
+        <div className="mb-6 p-4 border border-gray-300 rounded-lg bg-gray-50">
+          <h3 className="text-lg font-semibold mb-3">Resumo</h3>
           <div
             className="text-sm text-gray-800 prose prose-sm max-w-none break-words overflow-hidden"
             dangerouslySetInnerHTML={{ __html: resume?.summary || '' }}
           />
         </div>
 
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold">Experiência Profissional</h3>
+        <div className="mb-4 p-4 border border-gray-300 rounded-lg bg-gray-50">
+          <h3 className="text-lg font-semibold mb-3">Experiência Profissional</h3>
           <div className="space-y-3 mt-2">
             {experience.map((e: any, i: number) => (
               <div key={i}>
@@ -98,8 +98,8 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
           </div>
         </div>
 
-        <div>
-          <h3 className="text-lg font-semibold">Formação</h3>
+        <div className="p-4 border border-gray-300 rounded-lg bg-gray-50">
+          <h3 className="text-lg font-semibold mb-3">Formação</h3>
           <div className="mt-2 space-y-2">
             {education.map((ed: any, i: number) => (
               <div key={i}>
@@ -109,7 +109,7 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
                   {ed.period_start && ed.period_end && ` (${ed.period_start} - ${ed.period_end})`}
                   {ed.period && ` - ${ed.period}`}
                 </div>
-                {ed.location && <div className="text-sm text-gray-600">?? {ed.location}</div>}
+                {ed.location && <div className="text-sm text-gray-600">{ed.location}</div>}
               </div>
             ))}
           </div>
