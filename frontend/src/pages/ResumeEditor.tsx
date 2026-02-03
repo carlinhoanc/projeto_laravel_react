@@ -199,7 +199,7 @@ export default function ResumeEditor() {
     setShowPhotoModal(false);
   }, []);
 
-  const onSubmit = useCallback(async (data: any) => {
+  const onSubmit = useCallback(async (data: any, shouldRedirect: boolean = true) => {
     setSaving(true);
     try {
       const payload = { ...data };
@@ -244,7 +244,10 @@ export default function ResumeEditor() {
         console.log('Create response:', result);
         alert('Currículo criado');
       }
-      navigate('/resumes');
+      
+      if (shouldRedirect) {
+        navigate('/resumes');
+      }
     } catch (e: any) {
       console.error('Save failed', e);
       const msg = e?.message || 'Falha ao salvar currículo';
@@ -253,6 +256,14 @@ export default function ResumeEditor() {
       setSaving(false);
     }
   }, [params.id, navigate, croppedPhotoFile]);
+
+  const handleSaveOnly: any = useCallback((data: any) => {
+    return onSubmit(data, false);
+  }, [onSubmit]);
+
+  const handleSaveAndRedirect: any = useCallback((data: any) => {
+    return onSubmit(data, true);
+  }, [onSubmit]);
 
   const formValues = watch();
   const resumeForPreview = useMemo(() => ({
@@ -287,7 +298,7 @@ export default function ResumeEditor() {
         </div>
       ) : (
         <>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form className="space-y-6">
                 {currentUser?.access_level === 'admin' && availableUsers.length > 0 && (
                   <section className="bg-yellow-50 border border-yellow-300 rounded p-4">
                     <h3 className="text-lg font-semibold mb-3 text-yellow-800">Configuração Admin</h3>
@@ -550,14 +561,15 @@ export default function ResumeEditor() {
                 <div className="flex gap-3 pt-4 flex-wrap">
                   <button
                     type="button"
-                    onClick={handleSubmit(onSubmit)}
+                    onClick={handleSubmit(handleSaveOnly)}
                     className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                     disabled={saving}
                   >
                     {saving ? 'Salvando...' : 'Salvar'}
                   </button>
                   <button
-                    type="submit"
+                    type="button"
+                    onClick={handleSubmit(handleSaveAndRedirect)}
                     className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                     disabled={saving}
                   >
