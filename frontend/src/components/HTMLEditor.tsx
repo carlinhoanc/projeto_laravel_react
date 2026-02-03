@@ -1,4 +1,5 @@
-import { Editor } from '@tinymce/tinymce-react';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 interface HTMLEditorProps {
   value: string;
@@ -9,25 +10,42 @@ interface HTMLEditorProps {
 
 export function HTMLEditor({ value, onChange, placeholder = 'Digite aqui...', height = 300 }: HTMLEditorProps) {
   return (
-    <Editor
-      apiKey="no-api-key"
-      value={value}
-      onEditorChange={onChange}
-      init={{
-        height: height,
-        menubar: true,
-        plugins: [
-          'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-          'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-          'insertdatetime', 'media', 'table', 'help', 'wordcount'
-        ],
-        toolbar: 'undo redo | formatselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
-        branding: false,
-        toolbar_location: 'top',
-        content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }',
-        promotion: false,
-        placeholder: placeholder,
-      }}
-    />
+    <div style={{ height: height + 'px' }}>
+      <CKEditor
+        editor={ClassicEditor as any}
+        data={value}
+        onChange={(event: any, editor: any) => {
+          const data = editor.getData();
+          onChange(data);
+        }}
+        config={{
+          placeholder: placeholder,
+          toolbar: [
+            'heading',
+            '|',
+            'bold',
+            'italic',
+            'underline',
+            '|',
+            'bulletedList',
+            'numberedList',
+            'blockQuote',
+            '|',
+            'insertTable',
+            'link',
+            'undo',
+            'redo'
+          ],
+          heading: {
+            options: [
+              { model: 'paragraph', title: 'Parágrafo', class: 'ck-heading_paragraph' },
+              { model: 'heading1', view: 'h1', title: 'Título 1', class: 'ck-heading_heading1' },
+              { model: 'heading2', view: 'h2', title: 'Título 2', class: 'ck-heading_heading2' },
+              { model: 'heading3', view: 'h3', title: 'Título 3', class: 'ck-heading_heading3' }
+            ]
+          }
+        }}
+      />
+    </div>
   );
 }
