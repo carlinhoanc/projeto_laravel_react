@@ -386,7 +386,7 @@ export default function ResumeEditor() {
                     value={watch('summary')}
                     onChange={(val) => setValue('summary', val)}
                     placeholder="Resumo breve sobre você..."
-                    height={300}
+                    height={200}
                   />
                 </section>
 
@@ -429,7 +429,7 @@ export default function ResumeEditor() {
                             value={watch(`experience.${idx}.description` as const) || ''}
                             onChange={(val) => setValue(`experience.${idx}.description` as const, val)}
                             placeholder="Descrição da experiência..."
-                            height={250}
+                            height={150}
                           />
                         </div>
                         <button

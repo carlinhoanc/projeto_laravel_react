@@ -10,10 +10,16 @@ interface HTMLEditorProps {
 
 export function HTMLEditor({ value, onChange, placeholder = 'Digite aqui...', height = 300 }: HTMLEditorProps) {
   return (
-    <div style={{ height: height + 'px' }}>
+    <div style={{ minHeight: `${height}px` }}>
       <CKEditor
         editor={ClassicEditor as any}
         data={value}
+        onReady={(editor: any) => {
+          const editable = editor?.ui?.view?.editable?.element;
+          if (editable) {
+            editable.style.minHeight = `${height}px`;
+          }
+        }}
         onChange={(event: any, editor: any) => {
           const data = editor.getData();
           onChange(data);
