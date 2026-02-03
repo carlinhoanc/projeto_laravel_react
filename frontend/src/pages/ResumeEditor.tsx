@@ -3,6 +3,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { useParams, useNavigate } from 'react-router-dom';
 import ResumePreview from '../components/ResumePreview';
 import PhotoCropModal from '../components/PhotoCropModal';
+import { HTMLEditor } from '../components/HTMLEditor';
 import { useReactToPrint } from 'react-to-print';
 import MaskedInput from 'react-input-mask';
 import * as resumesApi from '../api/resumes';
@@ -50,7 +51,7 @@ function appendFormData(formData: FormData, value: any, key?: string) {
 }
 
 export default function ResumeEditor() {
-  const { register, control, handleSubmit, watch, reset, formState: { errors } } = useForm<any>({
+  const { register, control, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm<any>({
     defaultValues: {
       personal_info: { name: '', email: '', phone: '', city: '', country: '' },
       birth_date: '',
@@ -343,12 +344,11 @@ export default function ResumeEditor() {
 
                 <section>
                   <h3 className="text-lg font-semibold mb-3">Resumo Profissional</h3>
-                  <p className="text-xs text-gray-600 mb-2">💡 Você pode usar HTML: &lt;b&gt;negrito&lt;/b&gt;, &lt;i&gt;itálico&lt;/i&gt;, &lt;br/&gt; para quebra de linha, &lt;ul&gt;&lt;li&gt;listas&lt;/li&gt;&lt;/ul&gt;</p>
-                  <textarea
-                    {...register('summary')}
+                  <HTMLEditor
+                    value={watch('summary')}
+                    onChange={(val) => setValue('summary', val)}
                     placeholder="Resumo breve sobre você (aceita HTML)"
                     rows={5}
-                    className="border p-2 rounded w-full font-mono text-sm"
                   />
                 </section>
 
@@ -387,12 +387,11 @@ export default function ResumeEditor() {
                           />
                         </div>
                         <div className="mb-2">
-                          <label className="text-xs text-gray-600 mb-1 block">💡 Descrição (aceita HTML: &lt;b&gt;negrito&lt;/b&gt;, &lt;ul&gt;&lt;li&gt;lista&lt;/li&gt;&lt;/ul&gt;, etc)</label>
-                          <textarea 
-                            {...register(`experience.${idx}.description` as const)} 
-                            placeholder="Descrição" 
+                          <HTMLEditor
+                            value={watch(`experience.${idx}.description` as const) || ''}
+                            onChange={(val) => setValue(`experience.${idx}.description` as const, val)}
+                            placeholder="Descrição da experiência (aceita HTML)"
                             rows={4}
-                            className="border p-2 rounded w-full font-mono text-sm" 
                           />
                         </div>
                         <button
