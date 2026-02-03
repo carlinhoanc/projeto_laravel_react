@@ -275,7 +275,7 @@ export default function ResumeEditor() {
                       </div>
                     </div>
                     <input
-                      {...register('personal_info.name', { required: 'Nome obrigatorio' })}
+                      {...register('personal_info.name', { required: 'Nome obrigatório' })}
                       placeholder="Nome completo"
                       className="border p-2 rounded w-full"
                     />
@@ -285,7 +285,7 @@ export default function ResumeEditor() {
 
                     <input
                       {...register('personal_info.email', {
-                        required: 'Email obrigatorio',
+                        required: 'Email obrigatório',
                         pattern: { 
                           value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, 
                           message: 'Email inválido' 
@@ -313,14 +313,14 @@ export default function ResumeEditor() {
                   <h3 className="text-lg font-semibold mb-3">Resumo Profissional</h3>
                   <textarea
                     {...register('summary')}
-                    placeholder="Resumo breve sobre voce"
+                    placeholder="Resumo breve sobre você"
                     rows={3}
                     className="border p-2 rounded w-full"
                   />
                 </section>
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">Experiencia Profissional</h3>
+                    <h3 className="text-lg font-semibold mb-3">Experiência Profissional</h3>
                   <div className="space-y-4">
                     {expFields.map((f, idx) => (
                       <div key={f.id} className="border p-3 rounded bg-gray-50">
@@ -363,7 +363,7 @@ export default function ResumeEditor() {
                       onClick={() => expAppend({ company: '', period_start: '', period_end: '', description: '' })}
                       className="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
                     >
-                      + Adicionar Experiencia
+                      + Adicionar Experiência
                     </button>
                   </div>
                 </section>
