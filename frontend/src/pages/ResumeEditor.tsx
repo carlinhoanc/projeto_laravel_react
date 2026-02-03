@@ -347,8 +347,8 @@ export default function ResumeEditor() {
                   <HTMLEditor
                     value={watch('summary')}
                     onChange={(val) => setValue('summary', val)}
-                    placeholder="Resumo breve sobre você (aceita HTML)"
-                    rows={5}
+                    placeholder="Resumo breve sobre você..."
+                    height={300}
                   />
                 </section>
 
@@ -390,8 +390,8 @@ export default function ResumeEditor() {
                           <HTMLEditor
                             value={watch(`experience.${idx}.description` as const) || ''}
                             onChange={(val) => setValue(`experience.${idx}.description` as const, val)}
-                            placeholder="Descrição da experiência (aceita HTML)"
-                            rows={4}
+                            placeholder="Descrição da experiência..."
+                            height={250}
                           />
                         </div>
                         <button

@@ -16,6 +16,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.0",
     "@mui/material": "^5.14.0",
+    "@tinymce/tinymce-react": "^6.3.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
     "react": "^18.2.0",
@@ -23,7 +24,8 @@
     "react-hook-form": "^7.49.0",
     "react-input-mask": "^2.0.4",
     "react-router-dom": "^6.14.1",
-    "react-to-print": "^2.14.13"
+    "react-to-print": "^2.14.13",
+    "tinymce": "^8.3.2"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.0.0",
