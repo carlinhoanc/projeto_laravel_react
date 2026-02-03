@@ -275,7 +275,7 @@ export default function ResumeEditor() {
                       </div>
                     </div>
                     <input
-                      {...register('personal_info.name', { required: 'Nome obrigatório' })}
+                      {...register('personal_info.name', { required: 'Nome obrigat\u00f3rio' })}
                       placeholder="Nome completo"
                       className="border p-2 rounded w-full"
                     />
@@ -285,10 +285,10 @@ export default function ResumeEditor() {
 
                     <input
                       {...register('personal_info.email', {
-                        required: 'Email obrigatório',
+                        required: 'Email obrigat\u00f3rio',
                         pattern: { 
                           value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, 
-                          message: 'Email inválido' 
+                          message: 'Email inv\u00e1lido' 
                         },
                       })}
                       placeholder="Email"
@@ -313,14 +313,14 @@ export default function ResumeEditor() {
                   <h3 className="text-lg font-semibold mb-3">Resumo Profissional</h3>
                   <textarea
                     {...register('summary')}
-                    placeholder="Resumo breve sobre você"
+                    placeholder="Resumo breve sobre voc\u00ea"
                     rows={3}
                     className="border p-2 rounded w-full"
                   />
                 </section>
 
                 <section>
-                    <h3 className="text-lg font-semibold mb-3">Experiência Profissional</h3>
+                    <h3 className="text-lg font-semibold mb-3">Experi\u00eancia Profissional</h3>
                   <div className="space-y-4">
                     {expFields.map((f, idx) => (
                       <div key={f.id} className="border p-3 rounded bg-gray-50">
@@ -348,7 +348,7 @@ export default function ResumeEditor() {
                             className="border p-2 rounded"
                           />
                         </div>
-                        <textarea {...register(`experience.${idx}.description` as const)} placeholder="Descrição" className="border p-2 rounded w-full mb-2" />
+                        <textarea {...register(`experience.${idx}.description` as const)} placeholder="Descri\u00e7\u00e3o" className="border p-2 rounded w-full mb-2" />
                         <button
                           type="button"
                           onClick={() => expRemove(idx)}
@@ -363,19 +363,19 @@ export default function ResumeEditor() {
                       onClick={() => expAppend({ company: '', period_start: '', period_end: '', description: '' })}
                       className="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
                     >
-                      + Adicionar Experiência
+                      + Adicionar Experi\u00eancia
                     </button>
                   </div>
                 </section>
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">Educação</h3>
+                  <h3 className="text-lg font-semibold mb-3">Educa\u00e7\u00e3o</h3>
                   <div className="space-y-4">
                     {edFields.map((f, idx) => (
                       <div key={f.id} className="border p-3 rounded bg-gray-50">
                         <input
                           {...register(`education.${idx}.institution` as const)}
-                          placeholder="Instituição"
+                          placeholder="Institui\u00e7\u00e3o"
                           className="border p-2 rounded w-full mb-2"
                         />
                         <input {...register(`education.${idx}.diploma` as const)} placeholder="Diploma" className="border p-2 rounded w-full mb-2" />
@@ -408,7 +408,7 @@ export default function ResumeEditor() {
                       onClick={() => edAppend({ institution: '', diploma: '', area: '', location: '', period_start: '', period_end: '' })}
                       className="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
                     >
-                      + Adicionar Educação
+                      + Adicionar Educa\u00e7\u00e3o
                     </button>
                   </div>
                 </section>

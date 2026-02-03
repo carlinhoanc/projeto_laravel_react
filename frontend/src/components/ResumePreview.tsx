@@ -59,7 +59,7 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
         )}
 
         <div className="mb-4">
-          <h3 className="font-semibold">Principais Competencias</h3>
+          <h3 className="font-semibold">Principais Compet\u00eancias</h3>
           <div className="flex flex-wrap gap-2 mt-2">
             {skills.map((s: string, i: number) => (
               <span key={i} className="text-sm px-2 py-1 rounded" style={{ backgroundColor: 'rgba(59, 130, 246, 0.15)', color: sidebarText }}>
@@ -77,7 +77,7 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
         </div>
 
         <div className="mb-4">
-          <h3 className="text-lg font-semibold">Experiência Profissional</h3>
+          <h3 className="text-lg font-semibold">Experi\u00eancia Profissional</h3>
           <div className="space-y-3 mt-2">
             {experience.map((e: any, i: number) => (
               <div key={i}>
@@ -93,7 +93,7 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold">Formação</h3>
+          <h3 className="text-lg font-semibold">Forma\u00e7\u00e3o</h3>
           <div className="mt-2 space-y-2">
             {education.map((ed: any, i: number) => (
               <div key={i}>
