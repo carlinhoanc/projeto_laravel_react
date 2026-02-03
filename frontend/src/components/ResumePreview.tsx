@@ -83,7 +83,7 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
           <h3 className="text-lg font-semibold mb-3">Experiência Profissional</h3>
           <div className="space-y-3 mt-2">
             {experience.map((e: any, i: number) => (
-              <div key={i}>
+              <div key={i} className={i < experience.length - 1 ? 'pb-3 border-b border-gray-200' : ''}>
                 <div className="flex justify-between">
                   <div className="font-semibold">{e.company}</div>
                   <div className="text-sm text-gray-600">{e.period_start} - {e.period_end}</div>
@@ -102,7 +102,7 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
           <h3 className="text-lg font-semibold mb-3">Formação</h3>
           <div className="mt-2 space-y-2">
             {education.map((ed: any, i: number) => (
-              <div key={i}>
+              <div key={i} className={i < education.length - 1 ? 'pb-3 border-b border-gray-200' : ''}>
                 <div className="font-semibold">{ed.institution}</div>
                 <div className="text-sm text-gray-600">
                   {ed.diploma}
