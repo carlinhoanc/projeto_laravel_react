@@ -7,6 +7,7 @@ import { HTMLEditor } from '../components/HTMLEditor';
 import { useReactToPrint } from 'react-to-print';
 import MaskedInput from 'react-input-mask';
 import * as resumesApi from '../api/resumes';
+import { getCurrentUser, getUsers } from '../auth';
 
 function appendFormData(formData: FormData, value: any, key?: string) {
   if (value === undefined || value === null || key === undefined) return;
@@ -75,6 +76,8 @@ export default function ResumeEditor() {
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [selectedPhotoFile, setSelectedPhotoFile] = useState<File | null>(null);
   const [croppedPhotoFile, setCroppedPhotoFile] = useState<File | null>(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [availableUsers, setAvailableUsers] = useState<any[]>([]);
   const params = useParams();
   const navigate = useNavigate();
 
@@ -115,6 +118,20 @@ export default function ResumeEditor() {
 
   useEffect(() => {
     (async () => {
+      // Carrega usuário atual e lista de usuários (se admin)
+      try {
+        const userData = await getCurrentUser();
+        if (userData) {
+          setCurrentUser(userData.user);
+          if (userData.user.access_level === 'admin') {
+            const users = await getUsers();
+            setAvailableUsers(users);
+          }
+        }
+      } catch (e) {
+        console.error('Erro ao carregar usuário:', e);
+      }
+
       if (params.id) {
         setLoading(true);
         setLoadError(null);
@@ -271,6 +288,27 @@ export default function ResumeEditor() {
       ) : (
         <>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                {currentUser?.access_level === 'admin' && availableUsers.length > 0 && (
+                  <section className="bg-yellow-50 border border-yellow-300 rounded p-4">
+                    <h3 className="text-lg font-semibold mb-3 text-yellow-800">Configuração Admin</h3>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Usuário Proprietário</label>
+                      <select
+                        {...register('user_id')}
+                        className="border p-2 rounded w-full"
+                      >
+                        <option value="">Selecione um usuário</option>
+                        {availableUsers.map((user) => (
+                          <option key={user.id} value={user.id}>
+                            {user.name} ({user.email})
+                          </option>
+                        ))}
+                      </select>
+                      <p className="text-xs text-gray-600 mt-1">Como admin, você pode alterar o proprietário deste currículo</p>
+                    </div>
+                  </section>
+                )}
+
                 <section>
                   <h3 className="text-lg font-semibold mb-3">Dados Pessoais</h3>
                   <div className="space-y-2">

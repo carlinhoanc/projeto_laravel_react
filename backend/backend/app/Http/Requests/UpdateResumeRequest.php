@@ -90,6 +90,7 @@ class UpdateResumeRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'user_id' => 'nullable|exists:users,id',
             'personal_info' => 'nullable|array',
             'personal_info.name' => 'nullable|string|max:255',
             'personal_info.email' => 'nullable|email:rfc',

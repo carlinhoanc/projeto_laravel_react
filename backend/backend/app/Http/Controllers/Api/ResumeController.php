@@ -7,6 +7,7 @@ use App\Http\Requests\StoreResumeRequest;
 use App\Http\Requests\UpdateResumeRequest;
 use App\Models\Resume;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -83,6 +84,16 @@ class ResumeController extends Controller
         $validated = $request->validated();
 
         Log::info('After validation', ['validated_keys' => array_keys($validated)]);
+
+        // Apenas admin pode alterar o user_id
+        if (isset($validated['user_id'])) {
+            if (Auth::user()->access_level !== 'admin') {
+                unset($validated['user_id']);
+                Log::warning('Non-admin tried to change user_id');
+            } else {
+                Log::info('Admin changing resume owner', ['new_user_id' => $validated['user_id']]);
+            }
+        }
 
         // Remover campos que não devem ser salvos no banco
         unset($validated['photo_path']);
