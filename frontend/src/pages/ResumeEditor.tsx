@@ -338,7 +338,7 @@ export default function ResumeEditor() {
                           <MaskedInput
                             {...register(`experience.${idx}.period_start` as const)}
                             mask="99/9999"
-                            placeholder="Inicio (MM/AAAA)"
+                            placeholder="Início (MM/AAAA)"
                             className="border p-2 rounded"
                           />
                           <MaskedInput
@@ -348,7 +348,7 @@ export default function ResumeEditor() {
                             className="border p-2 rounded"
                           />
                         </div>
-                        <textarea {...register(`experience.${idx}.description` as const)} placeholder="Descricao" className="border p-2 rounded w-full mb-2" />
+                        <textarea {...register(`experience.${idx}.description` as const)} placeholder="Descrição" className="border p-2 rounded w-full mb-2" />
                         <button
                           type="button"
                           onClick={() => expRemove(idx)}
@@ -369,13 +369,13 @@ export default function ResumeEditor() {
                 </section>
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">Educacao</h3>
+                  <h3 className="text-lg font-semibold mb-3">Educação</h3>
                   <div className="space-y-4">
                     {edFields.map((f, idx) => (
                       <div key={f.id} className="border p-3 rounded bg-gray-50">
                         <input
                           {...register(`education.${idx}.institution` as const)}
-                          placeholder="Instituicao"
+                          placeholder="Instituição"
                           className="border p-2 rounded w-full mb-2"
                         />
                         <input {...register(`education.${idx}.diploma` as const)} placeholder="Diploma" className="border p-2 rounded w-full mb-2" />
@@ -384,7 +384,7 @@ export default function ResumeEditor() {
                           <MaskedInput
                             {...register(`education.${idx}.period_start` as const)}
                             mask="99/9999"
-                            placeholder="Inicio (MM/AAAA)"
+                            placeholder="Início (MM/AAAA)"
                             className="border p-2 rounded"
                           />
                           <MaskedInput
@@ -408,7 +408,7 @@ export default function ResumeEditor() {
                       onClick={() => edAppend({ institution: '', diploma: '', area: '', location: '', period_start: '', period_end: '' })}
                       className="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
                     >
-                      + Adicionar Educacao
+                      + Adicionar Educação
                     </button>
                   </div>
                 </section>
