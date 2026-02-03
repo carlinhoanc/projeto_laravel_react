@@ -77,7 +77,7 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
         </div>
 
         <div className="mb-4">
-          <h3 className="text-lg font-semibold">Experiencia Profissional</h3>
+          <h3 className="text-lg font-semibold">Experiência Profissional</h3>
           <div className="space-y-3 mt-2">
             {experience.map((e: any, i: number) => (
               <div key={i}>
@@ -93,7 +93,7 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold">Formacao</h3>
+          <h3 className="text-lg font-semibold">Formação</h3>
           <div className="mt-2 space-y-2">
             {education.map((ed: any, i: number) => (
               <div key={i}>
