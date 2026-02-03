@@ -143,6 +143,7 @@ export default function ResumeEditor() {
           console.log('ResumeEditor: extracted resume', resume);
           reset({
             ...resume,
+            user_id: resume.user_id || '',
             birth_date: normalizeDateInput(resume.birth_date),
             experience: normalizeExperience(resume.experience),
             education: normalizeEducation(resume.education),
@@ -204,7 +205,6 @@ export default function ResumeEditor() {
       const payload = { ...data };
       
       delete payload.id;
-      delete payload.user_id;
       delete payload.created_at;
       delete payload.updated_at;
       delete payload.user;
