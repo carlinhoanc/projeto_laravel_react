@@ -221,7 +221,7 @@ export default function ResumeEditor() {
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Editor de Curriculo</h2>
+      <h2 className="text-2xl font-bold mb-4">Editor de Currículo</h2>
 
       {loadError && (
         <div className="mb-4 p-3 bg-red-100 text-red-800 rounded">
@@ -231,7 +231,7 @@ export default function ResumeEditor() {
 
       {loading ? (
         <div className="text-center py-12">
-          <p className="text-gray-600">Carregando curriculo...</p>
+          <p className="text-gray-600">Carregando currículo...</p>
         </div>
       ) : (
         <>
@@ -275,7 +275,7 @@ export default function ResumeEditor() {
                       </div>
                     </div>
                     <input
-                      {...register('personal_info.name', { required: 'Nome obrigat\u00f3rio' })}
+                      {...register('personal_info.name', { required: 'Nome obrigatório' })}
                       placeholder="Nome completo"
                       className="border p-2 rounded w-full"
                     />
@@ -285,10 +285,10 @@ export default function ResumeEditor() {
 
                     <input
                       {...register('personal_info.email', {
-                        required: 'Email obrigat\u00f3rio',
+                        required: 'Email obrigatório',
                         pattern: { 
                           value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, 
-                          message: 'Email inv\u00e1lido' 
+                          message: 'Email inválido' 
                         },
                       })}
                       placeholder="Email"
@@ -491,7 +491,7 @@ export default function ResumeEditor() {
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold mb-3">Pre-visualizacao</h3>
+              <h3 className="text-lg font-semibold mb-3">Pré-visualização</h3>
               <div ref={previewRef} className="bg-white border rounded p-4">
                 {memoizedPreview}
               </div>
