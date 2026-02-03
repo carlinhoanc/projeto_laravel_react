@@ -245,7 +245,17 @@ export default function ResumeEditor() {
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Editor de Currículo</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold">Editor de Currículo</h2>
+        <button
+          type="button"
+          onClick={() => setShowPreviewModal(true)}
+          className="px-6 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 flex items-center gap-2"
+        >
+          <span>👁️</span>
+          <span>Pré-visualizar</span>
+        </button>
+      </div>
 
       {loadError && (
         <div className="mb-4 p-3 bg-red-100 text-red-800 rounded">
@@ -297,7 +307,7 @@ export default function ResumeEditor() {
                       </div>
                     </div>
                     <input
-                      {...register('personal_info.name', { required: 'Nome obrigat�rio' })}
+                      {...register('personal_info.name', { required: 'Nome obrigatório' })}
                       placeholder="Nome completo"
                       className="border p-2 rounded w-full"
                     />
@@ -307,10 +317,10 @@ export default function ResumeEditor() {
 
                     <input
                       {...register('personal_info.email', {
-                        required: 'Email obrigat�rio',
+                        required: 'Email obrigatório',
                         pattern: { 
                           value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, 
-                          message: 'Email inv�lido' 
+                          message: 'Email inválido' 
                         },
                       })}
                       placeholder="Email"
@@ -335,7 +345,7 @@ export default function ResumeEditor() {
                   <h3 className="text-lg font-semibold mb-3">Resumo Profissional</h3>
                   <textarea
                     {...register('summary')}
-                    placeholder="Resumo breve sobre voc�"
+                    placeholder="Resumo breve sobre você"
                     rows={3}
                     className="border p-2 rounded w-full"
                   />
@@ -375,7 +385,7 @@ export default function ResumeEditor() {
                             className="border p-2 rounded"
                           />
                         </div>
-                        <textarea {...register(`experience.${idx}.description` as const)} placeholder="Descri��o" className="border p-2 rounded w-full mb-2" />
+                        <textarea {...register(`experience.${idx}.description` as const)} placeholder="Descrição" className="border p-2 rounded w-full mb-2" />
                         <button
                           type="button"
                           onClick={() => expRemove(idx)}
@@ -535,9 +545,9 @@ export default function ResumeEditor() {
 
       {/* Modal de Pré-visualização */}
       {showPreviewModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={() => setShowPreviewModal(false)}>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4" onClick={() => setShowPreviewModal(false)}>
           <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
+            <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center z-10">
               <h3 className="text-xl font-semibold">Pré-visualização do Currículo</h3>
               <div className="flex gap-2">
                 <button
