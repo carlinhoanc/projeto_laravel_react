@@ -59,7 +59,7 @@ export default function ResumeEditor() {
       experience: [],
       education: [],
       skills: [''],
-      social_links: [''],
+      social_links: [{ label: '', url: '' }],
       summary: '',
       licenses: [],
       interests: [],
@@ -117,6 +117,20 @@ export default function ResumeEditor() {
     }));
   }, []);
 
+  const normalizeSocialLinks = useCallback((links: any) => {
+    if (!Array.isArray(links)) return [{ label: '', url: '' }];
+    const normalized = links.map((item: any) => {
+      if (typeof item === 'string') {
+        return { label: '', url: item };
+      }
+      return {
+        label: item?.label || item?.name || item?.title || '',
+        url: item?.url || item?.link || item?.href || '',
+      };
+    });
+    return normalized.length > 0 ? normalized : [{ label: '', url: '' }];
+  }, []);
+
   useEffect(() => {
     (async () => {
       // Carrega usuário atual e lista de usuários (se admin)
@@ -149,7 +163,7 @@ export default function ResumeEditor() {
             experience: normalizeExperience(resume.experience),
             education: normalizeEducation(resume.education),
             skills: resume.skills && resume.skills.length > 0 ? resume.skills : [''],
-            social_links: resume.social_links && resume.social_links.length > 0 ? resume.social_links : [''],
+            social_links: normalizeSocialLinks(resume.social_links),
             licenses: resume.licenses || [],
             interests: resume.interests || [],
           });
@@ -163,12 +177,12 @@ export default function ResumeEditor() {
         }
       }
     })();
-  }, [params.id, reset, normalizeEducation, normalizeExperience]);
+  }, [params.id, reset, normalizeEducation, normalizeExperience, normalizeSocialLinks]);
 
-  const { fields: expFields, append: expAppend, remove: expRemove } = useFieldArray({ control, name: 'experience' });
-  const { fields: edFields, append: edAppend, remove: edRemove } = useFieldArray({ control, name: 'education' });
-  const { fields: skillFields, append: skillAppend, remove: skillRemove } = useFieldArray({ control, name: 'skills' });
-  const { fields: socialFields, append: socialAppend, remove: socialRemove } = useFieldArray({ control, name: 'social_links' });
+  const { fields: expFields, append: expAppend, remove: expRemove, move: expMove } = useFieldArray({ control, name: 'experience' });
+  const { fields: edFields, append: edAppend, remove: edRemove, move: edMove } = useFieldArray({ control, name: 'education' });
+  const { fields: skillFields, append: skillAppend, remove: skillRemove, move: skillMove } = useFieldArray({ control, name: 'skills' });
+  const { fields: socialFields, append: socialAppend, remove: socialRemove, move: socialMove } = useFieldArray({ control, name: 'social_links' });
 
   const previewRef = useRef<HTMLDivElement>(null);
   const onPrint = useReactToPrint({ content: () => previewRef.current });
@@ -216,7 +230,11 @@ export default function ResumeEditor() {
         payload.skills = payload.skills.filter((s: string) => !!s && s.trim() !== '');
       }
       if (Array.isArray(payload.social_links)) {
-        payload.social_links = payload.social_links.filter((s: string) => !!s && s.trim() !== '');
+        payload.social_links = payload.social_links.filter((s: any) => {
+          const label = (s?.label || '').trim();
+          const url = (s?.url || '').trim();
+          return label !== '' || url !== '';
+        });
       }
 
       const formData = new FormData();
@@ -407,6 +425,37 @@ export default function ResumeEditor() {
                   <div className="space-y-4">
                     {expFields.map((f, idx) => (
                       <div key={f.id} className="border p-3 rounded bg-gray-50">
+                        <div className="flex justify-between items-start mb-2">
+                          <div className="flex gap-1">
+                            {idx > 0 && (
+                              <button
+                                type="button"
+                                onClick={() => expMove(idx, idx - 1)}
+                                className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+                                title="Mover para cima"
+                              >
+                                ↑
+                              </button>
+                            )}
+                            {idx < expFields.length - 1 && (
+                              <button
+                                type="button"
+                                onClick={() => expMove(idx, idx + 1)}
+                                className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+                                title="Mover para baixo"
+                              >
+                                ↓
+                              </button>
+                            )}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => expRemove(idx)}
+                            className="text-red-600 text-sm hover:text-red-800"
+                          >
+                            Remover
+                          </button>
+                        </div>
                         <input
                           {...register(`experience.${idx}.company` as const)}
                           placeholder="Empresa"
@@ -444,13 +493,6 @@ export default function ResumeEditor() {
                             height={150}
                           />
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => expRemove(idx)}
-                          className="text-red-600 text-sm hover:text-red-800"
-                        >
-                          Remover
-                        </button>
                       </div>
                     ))}
                     <button
@@ -468,6 +510,37 @@ export default function ResumeEditor() {
                   <div className="space-y-4">
                     {edFields.map((f, idx) => (
                       <div key={f.id} className="border p-3 rounded bg-gray-50">
+                        <div className="flex justify-between items-start mb-2">
+                          <div className="flex gap-1">
+                            {idx > 0 && (
+                              <button
+                                type="button"
+                                onClick={() => edMove(idx, idx - 1)}
+                                className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+                                title="Mover para cima"
+                              >
+                                ↑
+                              </button>
+                            )}
+                            {idx < edFields.length - 1 && (
+                              <button
+                                type="button"
+                                onClick={() => edMove(idx, idx + 1)}
+                                className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+                                title="Mover para baixo"
+                              >
+                                ↓
+                              </button>
+                            )}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => edRemove(idx)}
+                            className="text-red-600 text-sm hover:text-red-800"
+                          >
+                            Remover
+                          </button>
+                        </div>
                         <input
                           {...register(`education.${idx}.institution` as const)}
                           placeholder="Instituição"
@@ -490,13 +563,6 @@ export default function ResumeEditor() {
                             className="border p-2 rounded"
                           />
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => edRemove(idx)}
-                          className="text-red-600 text-sm hover:text-red-800"
-                        >
-                          Remover
-                        </button>
                       </div>
                     ))}
                     <button
@@ -513,12 +579,34 @@ export default function ResumeEditor() {
                   <h3 className="text-lg font-semibold mb-3">Habilidades</h3>
                   <div className="space-y-2">
                     {skillFields.map((s, idx) => (
-                      <div key={s.id} className="flex gap-2">
+                      <div key={s.id} className="flex gap-2 items-center">
                         <input
                           {...register(`skills.${idx}` as const)}
                           placeholder={`Habilidade ${idx + 1}`}
                           className="border p-2 rounded flex-1"
                         />
+                        <div className="flex gap-1">
+                          {idx > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => skillMove(idx, idx - 1)}
+                              className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+                              title="Mover para cima"
+                            >
+                              ↑
+                            </button>
+                          )}
+                          {idx < skillFields.length - 1 && (
+                            <button
+                              type="button"
+                              onClick={() => skillMove(idx, idx + 1)}
+                              className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+                              title="Mover para baixo"
+                            >
+                              ↓
+                            </button>
+                          )}
+                        </div>
                         <button type="button" onClick={() => skillRemove(idx)} className="text-red-600 hover:text-red-800">
                           x
                         </button>
@@ -536,22 +624,59 @@ export default function ResumeEditor() {
 
                 <section>
                   <h3 className="text-lg font-semibold mb-3">Redes / Links</h3>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     {socialFields.map((s, idx) => (
-                      <div key={s.id} className="flex gap-2">
-                        <input
-                          {...register(`social_links.${idx}` as const)}
-                          placeholder="https://..."
-                          className="border p-2 rounded flex-1"
-                        />
-                        <button type="button" onClick={() => socialRemove(idx)} className="text-red-600 hover:text-red-800">
-                          x
-                        </button>
+                      <div key={s.id} className="border p-2 rounded bg-gray-50">
+                        <div className="flex justify-between items-center mb-2">
+                          <div className="flex gap-1">
+                            {idx > 0 && (
+                              <button
+                                type="button"
+                                onClick={() => socialMove(idx, idx - 1)}
+                                className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+                                title="Mover para cima"
+                              >
+                                ↑
+                              </button>
+                            )}
+                            {idx < socialFields.length - 1 && (
+                              <button
+                                type="button"
+                                onClick={() => socialMove(idx, idx + 1)}
+                                className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+                                title="Mover para baixo"
+                              >
+                                ↓
+                              </button>
+                            )}
+                          </div>
+                          <button type="button" onClick={() => socialRemove(idx)} className="text-red-600 text-sm hover:text-red-800">
+                            Remover
+                          </button>
+                        </div>
+                        <div className="space-y-2">
+                          <div>
+                            <label className="block text-sm font-medium mb-1">Nome do Link</label>
+                            <input
+                              {...register(`social_links.${idx}.label` as const)}
+                              placeholder="Ex: LinkedIn, GitHub, Portfolio"
+                              className="border p-2 rounded w-full"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium mb-1">URL</label>
+                            <input
+                              {...register(`social_links.${idx}.url` as const)}
+                              placeholder="https://..."
+                              className="border p-2 rounded w-full"
+                            />
+                          </div>
+                        </div>
                       </div>
                     ))}
                     <button
                       type="button"
-                      onClick={() => socialAppend('')}
+                      onClick={() => socialAppend({ label: '', url: '' })}
                       className="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
                     >
                       + Link

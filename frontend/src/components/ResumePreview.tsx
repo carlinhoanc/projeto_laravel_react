@@ -6,6 +6,17 @@ const ResumePreview = forwardRef(({ resume, view = 'view1' }: { resume?: any; vi
   const education = resume?.education || [];
   const experience = resume?.experience || [];
   const photoUrl = resume?.photo_url;
+  const socialLinks = (resume?.social_links || [])
+    .map((item: any) => {
+      if (typeof item === 'string') {
+        return { label: '', url: item };
+      }
+      return {
+        label: item?.label || item?.name || item?.title || '',
+        url: item?.url || item?.link || item?.href || '',
+      };
+    })
+    .filter((item: any) => (item.label || '').trim() !== '' || (item.url || '').trim() !== '');
   const sidebarBg = resume?.sidebar_bg_color || '#f3f4f6';
   const sidebarText = resume?.sidebar_text_color || '#111827';
   const showSidebar = view === 'view1';
@@ -130,13 +141,26 @@ const ResumePreview = forwardRef(({ resume, view = 'view1' }: { resume?: any; vi
           </div>
         )}
 
-        {resume?.social_links && resume.social_links.length > 0 && (
+        {socialLinks.length > 0 && (
           <div className="mt-4 p-4 border border-gray-300 rounded-lg bg-gray-50 print:w-full">
             <h3 className="text-lg font-semibold mb-3">Redes / Links</h3>
-            <div className="text-sm text-gray-700">
-              {resume.social_links.map((l: string, i: number) => (
+            <div className="text-sm text-gray-700 space-y-2">
+              {socialLinks.map((l: any, i: number) => (
                 <div key={i} className="break-words overflow-hidden">
-                  <a href={l} target="_blank" rel="noreferrer" className="underline break-words text-gray-700">{l}</a>
+                  {l.label && l.url ? (
+                    <>
+                      <div className="font-medium text-gray-800">{l.label}</div>
+                      <a href={l.url} target="_blank" rel="noreferrer" className="underline break-all text-gray-700 text-xs">
+                        {l.url}
+                      </a>
+                    </>
+                  ) : l.url ? (
+                    <a href={l.url} target="_blank" rel="noreferrer" className="underline break-words text-gray-700">
+                      {l.url}
+                    </a>
+                  ) : (
+                    <span className="break-words text-gray-700">{l.label}</span>
+                  )}
                 </div>
               ))}
             </div>
