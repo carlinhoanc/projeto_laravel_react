@@ -739,13 +739,13 @@ export default function ResumeEditor() {
                     onClick={() => setPreviewMode('view1')}
                     className={`px-3 py-2 rounded ${previewMode === 'view1' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
                   >
-                    Ver 1
+                    Opcao 1
                   </button>
                   <button
                     onClick={() => setPreviewMode('view2')}
                     className={`px-3 py-2 rounded ${previewMode === 'view2' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
                   >
-                    Ver 2
+                    Opcao 2
                   </button>
                 </div>
                 <button

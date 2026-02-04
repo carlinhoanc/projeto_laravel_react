@@ -63,7 +63,44 @@ const ResumePreview = forwardRef(({ resume, view = 'view1' }: { resume?: any; vi
             <div className="text-sm break-words overflow-hidden" style={{ color: sidebarText }}>{p.phone}</div>
           </div>
 
-          {/* Habilidades e Redes/Links movidos para abaixo da Formação */}
+          {skills.length > 0 && (
+            <div className="mb-4">
+              <h3 className="font-semibold mb-2">Habilidades</h3>
+              <div className="text-sm space-y-1">
+                {skills.map((s: string, i: number) => (
+                  <div key={i} className="text-sm break-words">
+                    • {s}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {socialLinks.length > 0 && (
+            <div className="mb-4">
+              <h3 className="font-semibold mb-2">Redes / Links</h3>
+              <div className="text-sm space-y-1">
+                {socialLinks.map((l: any, i: number) => (
+                  <div key={i} className="break-words overflow-hidden text-xs">
+                    {l.label && l.url ? (
+                      <>
+                        <div className="font-medium">{l.label}</div>
+                        <a href={l.url} target="_blank" rel="noreferrer" className="underline break-all">
+                          {l.url}
+                        </a>
+                      </>
+                    ) : l.url ? (
+                      <a href={l.url} target="_blank" rel="noreferrer" className="underline break-words">
+                        {l.url}
+                      </a>
+                    ) : (
+                      <span className="break-words">{l.label}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </aside>
       )}
 
@@ -128,7 +165,7 @@ const ResumePreview = forwardRef(({ resume, view = 'view1' }: { resume?: any; vi
 
         </div>
 
-        {skills.length > 0 && (
+        {!showSidebar && skills.length > 0 && (
           <div className="mt-4 p-4 border border-gray-300 rounded-lg bg-gray-50 print:w-full">
             <h3 className="text-lg font-semibold mb-3">Habilidades</h3>
             <div className="flex flex-wrap gap-2">
@@ -141,7 +178,7 @@ const ResumePreview = forwardRef(({ resume, view = 'view1' }: { resume?: any; vi
           </div>
         )}
 
-        {socialLinks.length > 0 && (
+        {!showSidebar && socialLinks.length > 0 && (
           <div className="mt-4 p-4 border border-gray-300 rounded-lg bg-gray-50 print:w-full">
             <h3 className="text-lg font-semibold mb-3">Redes / Links</h3>
             <div className="text-sm text-gray-700 space-y-2">
