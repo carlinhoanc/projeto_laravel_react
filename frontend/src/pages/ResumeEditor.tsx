@@ -76,6 +76,7 @@ export default function ResumeEditor() {
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [selectedPhotoFile, setSelectedPhotoFile] = useState<File | null>(null);
   const [croppedPhotoFile, setCroppedPhotoFile] = useState<File | null>(null);
+  const [previewMode, setPreviewMode] = useState<'view1' | 'view2'>('view1');
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [availableUsers, setAvailableUsers] = useState<any[]>([]);
   const params = useParams();
@@ -270,7 +271,7 @@ export default function ResumeEditor() {
     ...formValues,
     photo_url: photoPreview || (formValues as any)?.photo_url,
   }), [formValues, photoPreview]);
-  const memoizedPreview = useMemo(() => <ResumePreview resume={resumeForPreview} />, [resumeForPreview]);
+  const memoizedPreview = useMemo(() => <ResumePreview resume={resumeForPreview} view={previewMode} />, [resumeForPreview, previewMode]);
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
@@ -608,6 +609,20 @@ export default function ResumeEditor() {
             <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center z-10">
               <h3 className="text-xl font-semibold">Pré-visualização do Currículo</h3>
               <div className="flex gap-2">
+                <div className="flex gap-2 mr-2">
+                  <button
+                    onClick={() => setPreviewMode('view1')}
+                    className={`px-3 py-2 rounded ${previewMode === 'view1' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
+                  >
+                    Ver 1
+                  </button>
+                  <button
+                    onClick={() => setPreviewMode('view2')}
+                    className={`px-3 py-2 rounded ${previewMode === 'view2' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
+                  >
+                    Ver 2
+                  </button>
+                </div>
                 <button
                   onClick={() => onPrint?.()}
                   className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-900"
@@ -622,7 +637,7 @@ export default function ResumeEditor() {
                 </button>
               </div>
             </div>
-            <div ref={previewRef} className="p-6">
+            <div ref={previewRef} className={previewMode === 'view2' ? 'p-0 print:p-0' : 'p-6'}>
               {memoizedPreview}
             </div>
           </div>

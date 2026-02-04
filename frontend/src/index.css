@@ -28,4 +28,13 @@ html, body, #app {
     width: 70%;
     float: right;
   }
+  .resume-preview.view2 > aside {
+    display: none;
+    width: 0;
+    float: none;
+  }
+  .resume-preview.view2 > main {
+    width: 100%;
+    float: none;
+  }
 }

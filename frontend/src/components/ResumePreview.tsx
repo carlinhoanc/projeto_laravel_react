@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 
-const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
+const ResumePreview = forwardRef(({ resume, view = 'view1' }: { resume?: any; view?: 'view1' | 'view2' }, ref: any) => {
   const p = resume?.personal_info || {};
   const skills = resume?.skills || [];
   const education = resume?.education || [];
@@ -8,6 +8,7 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
   const photoUrl = resume?.photo_url;
   const sidebarBg = resume?.sidebar_bg_color || '#f3f4f6';
   const sidebarText = resume?.sidebar_text_color || '#111827';
+  const showSidebar = view === 'view1';
 
   const formatBirthDate = (value?: string) => {
     if (!value) return null;
@@ -24,54 +25,50 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
   const birthDateLabel = formatBirthDate(resume?.birth_date || p?.birth_date);
 
   return (
-    <div ref={ref} className="resume-preview max-w-4xl mx-auto flex gap-6">
-      <aside className="w-1/3 p-4 break-words" style={{ backgroundColor: sidebarBg, color: sidebarText }}>
-        {photoUrl && (
-          <div className="mb-4">
-            <img src={photoUrl} alt="Foto do perfil" className="w-32 h-32 object-cover rounded-full border" />
-          </div>
-        )}
-        <div className="mb-4">
-          <h2 className="text-xl font-bold break-words">{p.name}</h2>
-          <div className="text-sm break-words" style={{ color: sidebarText }}>{p.city} {p.country && ", " + p.country}</div>
-          {birthDateLabel && (
-            <div className="text-sm break-words" style={{ color: sidebarText }}>
-              Nascido em {birthDateLabel}
+    <div
+      ref={ref}
+      className={`resume-preview ${showSidebar ? '' : 'view2'} flex ${showSidebar ? 'gap-6 max-w-4xl mx-auto' : 'gap-0 w-full max-w-none'} print:w-full print:max-w-none print:m-0 print:block`}
+    >
+      {showSidebar && (
+        <aside className="w-1/3 p-4 break-words print:hidden" style={{ backgroundColor: sidebarBg, color: sidebarText }}>
+          {photoUrl && (
+            <div className="mb-4">
+              <img src={photoUrl} alt="Foto do perfil" className="w-32 h-32 object-cover rounded-full border" />
             </div>
           )}
-        </div>
-
-        <div className="mb-4">
-          <h3 className="font-semibold">Contato</h3>
-          <div className="text-sm break-words overflow-hidden" style={{ color: sidebarText }}>{p.email}</div>
-          <div className="text-sm break-words overflow-hidden" style={{ color: sidebarText }}>{p.phone}</div>
-        </div>
-
-        {resume?.social_links && resume.social_links.length > 0 && (
           <div className="mb-4">
-            <h3 className="font-semibold">Links</h3>
-            <div className="text-sm mt-1" style={{ color: sidebarText }}>
-              {resume.social_links.map((l: string, i: number) => (
-                <div key={i} className="break-words overflow-hidden"><a href={l} target="_blank" rel="noreferrer" className="underline break-words" style={{ color: sidebarText }}>{l}</a></div>
-              ))}
-            </div>
+            <h2 className="text-xl font-bold break-words">{p.name}</h2>
+            <div className="text-sm break-words" style={{ color: sidebarText }}>{p.city} {p.country && ", " + p.country}</div>
+            {birthDateLabel && (
+              <div className="text-sm break-words" style={{ color: sidebarText }}>
+                Nascido em {birthDateLabel}
+              </div>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <h3 className="font-semibold">Contato</h3>
+            <div className="text-sm break-words overflow-hidden" style={{ color: sidebarText }}>{p.email}</div>
+            <div className="text-sm break-words overflow-hidden" style={{ color: sidebarText }}>{p.phone}</div>
+          </div>
+
+          {/* Habilidades e Redes/Links movidos para abaixo da Formação */}
+        </aside>
+      )}
+
+      <main className={`${showSidebar ? 'w-2/3' : 'w-full'} bg-white p-4 print:w-full print:max-w-none`}>
+        {!showSidebar && (
+          <div className="mb-6 p-4 border border-gray-300 rounded-lg bg-gray-50 print:w-full">
+            <h2 className="text-2xl font-bold break-words">{p.name}</h2>
+            <div className="text-sm text-gray-600 break-words">{p.city} {p.country && ", " + p.country}</div>
+            {birthDateLabel && (
+              <div className="text-sm text-gray-600 break-words">Nascido em {birthDateLabel}</div>
+            )}
+            <div className="mt-2 text-sm text-gray-600 break-words">{p.email} {p.phone && `• ${p.phone}`}</div>
+
           </div>
         )}
-
-        <div className="mb-4">
-          <h3 className="font-semibold">Principais Competências</h3>
-          <div className="flex flex-wrap gap-2 mt-2">
-            {skills.map((s: string, i: number) => (
-              <span key={i} className="text-sm px-2 py-1 rounded break-words" style={{ backgroundColor: 'rgba(59, 130, 246, 0.15)', color: sidebarText }}>
-                {s}
-              </span>
-            ))}
-          </div>
-        </div>
-      </aside>
-
-      <main className="w-2/3 bg-white p-4">
-        <div className="mb-6 p-4 border border-gray-300 rounded-lg bg-gray-50">
+        <div className="mb-6 p-4 border border-gray-300 rounded-lg bg-gray-50 print:w-full">
           <h3 className="text-lg font-semibold mb-3">Resumo</h3>
           <div
             className="text-sm text-gray-800 prose prose-sm max-w-none break-words overflow-hidden"
@@ -79,7 +76,7 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
           />
         </div>
 
-        <div className="mb-4 p-4 border border-gray-300 rounded-lg bg-gray-50">
+        <div className="mb-4 p-4 border border-gray-300 rounded-lg bg-gray-50 print:w-full">
           <h3 className="text-lg font-semibold mb-3">Experiência Profissional</h3>
           <div className="space-y-3 mt-2">
             {experience.map((e: any, i: number) => (
@@ -98,11 +95,15 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
           </div>
         </div>
 
-        <div className="p-4 border border-gray-300 rounded-lg bg-gray-50">
+        <div className="p-4 border border-gray-300 rounded-lg bg-gray-50 print:w-full">
           <h3 className="text-lg font-semibold mb-3">Formação</h3>
           <div className="mt-2 space-y-2">
             {education.map((ed: any, i: number) => (
-              <div key={i} className={i < education.length - 1 ? 'pb-3 border-b border-gray-200' : ''}>
+              <div
+                key={i}
+                className={i < education.length - 1 ? 'pb-3 border-b border-gray-200' : ''}
+                style={{ breakInside: 'avoid', pageBreakInside: 'avoid' }}
+              >
                 <div className="font-semibold">{ed.institution}</div>
                 <div className="text-sm text-gray-600">
                   {ed.diploma}
@@ -113,7 +114,34 @@ const ResumePreview = forwardRef(({ resume }: { resume?: any }, ref: any) => {
               </div>
             ))}
           </div>
+
         </div>
+
+        {skills.length > 0 && (
+          <div className="mt-4 p-4 border border-gray-300 rounded-lg bg-gray-50 print:w-full">
+            <h3 className="text-lg font-semibold mb-3">Habilidades</h3>
+            <div className="flex flex-wrap gap-2">
+              {skills.map((s: string, i: number) => (
+                <span key={i} className="text-sm px-2 py-1 rounded break-words bg-blue-50 text-blue-900">
+                  {s}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {resume?.social_links && resume.social_links.length > 0 && (
+          <div className="mt-4 p-4 border border-gray-300 rounded-lg bg-gray-50 print:w-full">
+            <h3 className="text-lg font-semibold mb-3">Redes / Links</h3>
+            <div className="text-sm text-gray-700">
+              {resume.social_links.map((l: string, i: number) => (
+                <div key={i} className="break-words overflow-hidden">
+                  <a href={l} target="_blank" rel="noreferrer" className="underline break-words text-gray-700">{l}</a>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
