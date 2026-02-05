@@ -42,6 +42,30 @@ Inclui um workflow básico (`.github/workflows/ci.yml`) que roda os testes do bac
 Sinta-se à vontade para abrir issues ou pull requests. Para mudanças significativas, abra uma issue primeiro para discutir o plano.
 
 
-Feito com ?? por carlinhoanc.
+## Screenshots
 
-![Screenshot do sistema](screenshots/08_08_preview_scrolled_2026-02-05T1748.png)
+### 1. Login
+![Login](screenshots/01_01_login_page_2026-02-05T1748.png)
+
+### 2. Login preenchido
+![Login preenchido](screenshots/02_02_login_preenchido_2026-02-05T1736.png)
+
+### 3. Dashboard
+![Dashboard](screenshots/03_03_dashboard_home_2026-02-05T1736.png)
+
+### 4. Lista de usuários
+![Lista de usuários](screenshots/04_04_lista_usuarios_2026-02-05T1721.png)
+
+### 5. Perfil do usuário
+![Perfil do usuário](screenshots/05_05_perfil_usuario_2026-02-05T1721.png)
+
+### 6. Edição de currículo
+![Edição de currículo](screenshots/06_06_edicao_curriculo_2026-02-05T1748.png)
+
+### 7. Lista de currículos
+![Lista de currículos](screenshots/07_07_lista_curriculo_2026-02-05T1721.png)
+
+### 8. Preview (scrolled)
+![Preview scrolled](screenshots/08_08_preview_scrolled_2026-02-05T1748.png)
+
+Feito com ?? por carlinhoanc.
