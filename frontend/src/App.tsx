@@ -9,23 +9,52 @@ import Profile from './pages/Profile';
 import ForgotPassword from './pages/ForgotPassword';
 import DashboardResumes from './pages/DashboardResumes';
 import ResumeEditor from './pages/ResumeEditor';
-import { getCurrentUser, removeAuthToken } from './auth';
+import { getCurrentUser, removeAuthToken, getAuthToken } from './auth';
 
 export default function App() {
   const [user, setUser] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log('App mounted');
+    console.log('App mounted, checking auth...');
     (async () => {
-      const res = await getCurrentUser();
-      console.log('getCurrentUser result:', res);
-      if (res) setUser(res.user);
+      try {
+        const token = getAuthToken();
+        console.log('Token in localStorage:', !!token);
+        
+        if (!token) {
+          console.log('No token, user will need to login');
+          setLoading(false);
+          return;
+        }
+
+        const res = await getCurrentUser();
+        console.log('getCurrentUser result:', res);
+        if (res?.user) {
+          setUser(res.user);
+        } else {
+          console.log('No user returned, clearing token');
+          removeAuthToken();
+        }
+      } catch (e) {
+        console.error('Error checking auth:', e);
+      } finally {
+        setLoading(false);
+      }
     })();
   }, []);
 
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">Carregando...</div>;
+  }
+
   const handleLogout = async () => {
     const { logout } = await import('./auth');
-    await logout();
+    try {
+      await logout();
+    } catch (e) {
+      console.error('Logout error:', e);
+    }
     removeAuthToken();
     setUser(null);
   };
@@ -33,16 +62,16 @@ export default function App() {
   return (
     <Layout user={user} onLogout={handleLogout}>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<Login onLogin={(u: any) => setUser(u)} />} />
-        <Route path="/register" element={<Register onRegister={(u: any) => setUser(u)} />} />
+        <Route path="/" element={<Navigate to={user ? '/dashboard' : '/login'} replace />} />
+        <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <Login onLogin={(u: any) => setUser(u)} />} />
+        <Route path="/register" element={user ? <Navigate to="/dashboard" replace /> : <Register onRegister={(u: any) => setUser(u)} />} />
         <Route path="/forgot" element={<ForgotPassword />} />
-        <Route path="/dashboard" element={user ? <Dashboard user={user} /> : <Navigate to="/login" />} />
-        <Route path="/resumes" element={user ? <DashboardResumes user={user} /> : <Navigate to="/login" />} />
-        <Route path="/resumes/new" element={user ? <ResumeEditor /> : <Navigate to="/login" />} />
-        <Route path="/resumes/:id" element={user ? <ResumeEditor /> : <Navigate to="/login" />} />
-        <Route path="/users" element={user ? <UsersList /> : <Navigate to="/login" />} />
-        <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
+        <Route path="/dashboard" element={user ? <Dashboard user={user} /> : <Navigate to="/login" replace />} />
+        <Route path="/resumes" element={user ? <DashboardResumes user={user} /> : <Navigate to="/login" replace />} />
+        <Route path="/resumes/new" element={user ? <ResumeEditor /> : <Navigate to="/login" replace />} />
+        <Route path="/resumes/:id" element={user ? <ResumeEditor /> : <Navigate to="/login" replace />} />
+        <Route path="/users" element={user ? <UsersList /> : <Navigate to="/login" replace />} />
+        <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" replace />} />
       </Routes>
     </Layout>
   );

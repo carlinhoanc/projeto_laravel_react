@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
         'access_level',
+        'role',
     ];
 
     /**
@@ -30,6 +31,10 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+    public function isAdmin(): bool
+    {
+        return ($this->role ?? 'user') === 'admin' || ($this->access_level ?? '') === 'admin';
+    }
     protected $hidden = [
         'password',
         'remember_token',

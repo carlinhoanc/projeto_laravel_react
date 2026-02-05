@@ -1,5 +1,5 @@
-// API base URL pointing to Laravel backend
-export const API_URL = 'http://localhost:8000/api';
+// Use a relative API base so Vite dev server proxy is used in development
+export const API_URL = '/api';
 
 // Store auth token in localStorage
 export function setAuthToken(token: string): void {
@@ -14,10 +14,11 @@ export function removeAuthToken(): void {
   localStorage.removeItem('auth_token');
 }
 
-export function getAuthHeaders(): Record<string, string> {
+export function getAuthHeaders(options: { includeContentType?: boolean } = {}): Record<string, string> {
+  const { includeContentType = true } = options;
   const token = getAuthToken();
   return {
-    'Content-Type': 'application/json',
+    ...(includeContentType ? { 'Content-Type': 'application/json' } : {}),
     ...(token && { Authorization: `Bearer ${token}` }),
   };
 }
@@ -71,16 +72,34 @@ export async function login(email: string, password: string): Promise<AuthRespon
 
 export async function getCurrentUser(): Promise<{ user: User } | null> {
   try {
-    const response = await fetch(`${API_URL}/me`, {
-      headers: getAuthHeaders(),
-    });
-
-    if (!response.ok) {
+    const token = getAuthToken();
+    console.log('[auth.getCurrentUser] token present:', !!token);
+    
+    if (!token) {
+      console.log('[auth.getCurrentUser] no token, returning null');
       return null;
     }
 
-    return response.json();
-  } catch {
+    const headers = getAuthHeaders();
+    console.log('[auth.getCurrentUser] headers:', { 'Authorization': headers.Authorization ? 'Bearer ...' : 'none' });
+    
+    const response = await fetch(`${API_URL}/me`, {
+      headers,
+    });
+
+    console.log('[auth.getCurrentUser] response status:', response.status);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[auth.getCurrentUser] error:', response.status, errorText);
+      return null;
+    }
+
+    const data = await response.json();
+    console.log('[auth.getCurrentUser] success, user:', data.user?.name);
+    return data;
+  } catch (e) {
+    console.error('[auth.getCurrentUser] exception:', e);
     return null;
   }
 }

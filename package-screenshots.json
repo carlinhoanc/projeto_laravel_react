@@ -1,0 +1,22 @@
+{
+  "name": "curriculum-screenshots",
+  "version": "1.0.0",
+  "description": "Script de automação para captura de telas do projeto Laravel + React",
+  "main": "screenshots_automation.js",
+  "scripts": {
+    "screenshots": "node screenshots_automation.js",
+    "screenshots:python": "python screenshots_automation.py"
+  },
+  "keywords": [
+    "screenshots",
+    "automation",
+    "puppeteer",
+    "curriculum"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer": "^21.0.0"
+  },
+  "devDependencies": {}
+}

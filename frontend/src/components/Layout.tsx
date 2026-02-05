@@ -47,7 +47,7 @@ export default function Layout({ children, user, onLogout }: any) {
 
   const primaryItems = [
     { text: 'Dashboard', icon: norm(DashboardIcon), path: '/dashboard' },
-    { text: 'Currículos', icon: norm(DashboardIcon), path: '/resumes' },
+    { text: 'CurrÃ­culos', icon: norm(DashboardIcon), path: '/resumes' },
   ];
 
   const adminItems = [{ text: 'Usuarios', icon: norm(PeopleIcon), path: '/users' }];
@@ -153,7 +153,7 @@ export default function Layout({ children, user, onLogout }: any) {
       <Box component="main" sx={{ flexGrow: 1, p: 3, width: { md: `calc(100% - ${drawerWidth}px)` } }}>
         <Toolbar />
         <Container>
-          <Box sx={{ mb: 2, p: 1, bgcolor: '#e3f2fd' }} id="debug-banner">{"DEBUG: Layout rendered ? " + diagSummary}</Box>
+          {/* <Box sx={{ mb: 2, p: 1, bgcolor: '#e3f2fd' }} id="debug-banner">{"DEBUG: Layout rendered ? " + diagSummary}</Box> */}
           {children}
         </Container>
         <Box component="footer" sx={{ p: 2, textAlign: 'center', mt: 4 }}>

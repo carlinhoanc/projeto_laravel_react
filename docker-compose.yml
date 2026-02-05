@@ -8,7 +8,7 @@ services:
     volumes:
       - ./backend:/var/www
     working_dir: /var/www/backend
-    command: php artisan serve --host 0.0.0.0 --port 8000
+    command: php -d upload_max_filesize=20M -d post_max_size=22M -d max_file_uploads=20 artisan serve --host 0.0.0.0 --port 8000
     ports:
       - "8000:8000"
     depends_on:
