@@ -27,11 +27,9 @@ Pré-requisitos: Docker e Docker Compose instalados.
 
 ## Testes
 
-- Backend (dentro do container):
 
   docker compose exec backend sh -c "cd backend && composer install && php artisan test"
 
-- Frontend (local ou dentro do container):
 
   docker compose exec frontend sh -c "cd frontend && npm ci && npm run build"
 
@@ -43,6 +41,7 @@ Inclui um workflow básico (`.github/workflows/ci.yml`) que roda os testes do bac
 
 Sinta-se à vontade para abrir issues ou pull requests. Para mudanças significativas, abra uma issue primeiro para discutir o plano.
 
----
 
 Feito com ?? por carlinhoanc.
+
+![Screenshot do sistema](screenshots/08_08_preview_scrolled_2026-02-05T1748.png)
