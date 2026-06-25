@@ -26,6 +26,7 @@ class ResumeController extends Controller
         // Set cache headers for API responses (5 minutes)
         $cacheMinutes = 5;
 
+        // Admin users can see all resumes, regular users see only their own
         if ($user->isAdmin()) {
             $resumes = Resume::with('user')->paginate(20);
         } else {
